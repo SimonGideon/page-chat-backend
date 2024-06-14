@@ -11,6 +11,9 @@
 /.env*
 !/.env*.erb
 
+# ingore vscode
+.vscode
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
