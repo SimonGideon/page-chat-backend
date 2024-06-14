@@ -58,6 +58,8 @@ group :development, :test do
   gem "byebug"
   # factory bot
   gem "factory_bot_rails"
+  # faker
+  gem "faker"
 end
 
 group :development do
