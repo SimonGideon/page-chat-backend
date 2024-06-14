@@ -12,6 +12,7 @@ class User < ApplicationRecord
             :date_of_birth, presence: true
 
   validates :email, :membership_number, :jti, uniqueness: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   private
 
