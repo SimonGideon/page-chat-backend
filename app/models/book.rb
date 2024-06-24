@@ -4,14 +4,38 @@ class Book < ApplicationRecord
 
   validates :title, :description, :language, :page_count, :published_at, presence: true
   validates :featured, inclusion: { in: [true, false] }
-  validates :pdf, attached: true, content_type: ["application/pdf"]
-  validates :cover_image, attached: true, content_type: ["image/png", "image/jpg", "image/jpeg", "image/avif", "image/webp", "image/svg+xml"]
+  validate :only_pdf
+  validate :acceptable_images
 
   before_save :extract_page_count, if: :pdf_attached?
   before_save :extract_cover_image, if: -> { pdf.attached? && !cover_image.attached? }
 
   private
 
+  # PDF upload content-type validation
+  def only_pdf
+    return unless pdf.attached?
+
+    unless pdf.content_type == "application/pdf"
+      errors.add(:pdf, "must be a PDF")
+    end
+  end
+
+  # Cover image upload validation
+  def acceptable_images
+    return unless cover_image.attached?
+
+    unless cover_image.byte_size <= 1.megabyte
+      errors.add(:cover_image, "is too big")
+    end
+
+    acceptable_types = ["image/png", "image/jpg", "image/jpeg", "image/avif", "image/webp", "image/svg+xml"]
+    unless acceptable_types.include?(cover_image.content_type)
+      errors.add(:cover_image, "must be a JPEG, JPG, AVIF, WEBP, SVG, or PNG")
+    end
+  end
+
+  # Extract page count from attached PDF
   def extract_page_count
     return unless pdf.attached?
 
@@ -19,17 +43,14 @@ class Book < ApplicationRecord
     self.page_count = reader.page_count
   end
 
-  def pdf_attached?
-    pdf.attached?
-  end
-
+  # Extract cover image from attached PDF and attach it
   def extract_cover_image
     return unless pdf.attached?
 
     reader = PDF::Reader.new(pdf.download)
     # Extract the first image from the first page of the PDF
     page = reader.pages.first
-    image = page.images.first
+    image = page&.images&.first
 
     return unless image
 
