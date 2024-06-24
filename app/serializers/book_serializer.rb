@@ -1,6 +1,6 @@
 class BookSerializer
   include JSONAPI::Serializer
-  attributes :id, :title, :author, :description, :publication_year, :language,
+  attributes :id, :title, :description, :publication_year, :language,
              :publisher, :page_count, :isbn, :featured, :pdf_url, :cover_image_url
 
   def pdf_url
