@@ -49,7 +49,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_24_083434) do
     t.string "edition"
     t.string "publisher"
     t.integer "page_count", null: false
-    t.date "published_at", null: true
+    t.date "published_at", null: false
     t.string "isbn"
     t.boolean "featured", default: false, null: false
     t.datetime "created_at", null: false
