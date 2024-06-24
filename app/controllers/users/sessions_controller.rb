@@ -13,8 +13,9 @@ class Users::SessionsController < Devise::SessionsController
              }, status: :ok
     else
       render json: {
-               status: { code: 401, message: "Invalid login email or password." },
-             }, status: :unauthorized
+        status: { code: 401, message: "Invalid login email or password." },
+        errors: resource.errors.full_messages,  # Optionally include errors for debugging
+      }, status: :unauthorized
     end
   end
 
