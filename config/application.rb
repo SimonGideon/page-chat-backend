@@ -33,5 +33,8 @@ module FaithReads
 
       # g.fixture_replacement :factory_bot, dir: "spec/factories"
     end
+    config.generators do |g|
+      g.orm :active_record, primary_key_type: :uuid
+    end
   end
 end
