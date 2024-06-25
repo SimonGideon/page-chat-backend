@@ -1,4 +1,5 @@
 class BooksController < ApplicationController
+  before_action :authenticate_user!, except: %i[index]
   respond_to :json
 
   #   get all books
@@ -76,7 +77,7 @@ class BooksController < ApplicationController
   def book_params
     params.require(:book).permit(
       :title, :description, :publication_year, :language,
-      :publisher, :page_count, :isbn, :featured, :pdf, :cover_image
+      :publisher, :isbn, :featured, :pdf, :cover_image
     )
   end
 end
