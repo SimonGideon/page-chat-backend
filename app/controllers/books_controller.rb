@@ -76,8 +76,8 @@ class BooksController < ApplicationController
 
   def book_params
     params.require(:book).permit(
-      :title, :description, :publication_year, :language,
-      :publisher, :isbn, :featured, :pdf, :cover_image
-    )
+      :title, :description, :language,
+      :publisher, :isbn, :featured, :pdf, :cover_image, :page_count
+    ).with_defaults(:published_at => Time.now)
   end
 end

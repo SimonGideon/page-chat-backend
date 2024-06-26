@@ -1,13 +1,16 @@
 class BookSerializer
   include JSONAPI::Serializer
-  attributes :id, :title, :description, :publication_year, :language,
-             :publisher, :page_count, :isbn, :featured, :pdf_url, :cover_image_url
+  attributes :id, :title, :description, :language, :publisher, :page_count, :isbn, :featured, :pdf_url, :cover_image_url
 
-  def pdf_url
-    Rails.application.routes.url_helpers.rails_blob_url(object.pdf, only_path: true) if object.pdf.attached?
+  attribute :pdf_url do |book|
+    if book.pdf.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(book.pdf, only_path: true)
+    end
   end
 
-  def cover_image_url
-    Rails.application.routes.url_helpers.rails_blob_url(object.cover_image, only_path: true) if object.cover_image.attached?
+  attribute :cover_image_url do |book|
+    if book.cover_image.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(book.cover_image, only_path: true)
+    end
   end
 end

@@ -2,19 +2,18 @@ class Book < ApplicationRecord
   has_one_attached :pdf
   has_one_attached :cover_image
 
-  validates :title, :description, :language, :page_count, :published_at, presence: true
+  validates :title, :description, :language, :published_at, presence: true
   validates :featured, inclusion: { in: [true, false] }
-  validate :only_pdf
+  # validate :only_pdf
   validate :acceptable_images
-
-  before_save :extract_page_count, if: :pdf_attached?
-  before_save :extract_cover_image, if: -> { pdf.attached? && !cover_image.attached? }
+  # before_save :extract_page_count
+  # before_save :extract_cover_image, if: -> { pdf.attached? && !cover_image.attached? }
 
   private
 
   # PDF upload content-type validation
   def only_pdf
-    return unless pdf.attached?
+    # return unless pdf.attached?
 
     unless pdf.content_type == "application/pdf"
       errors.add(:pdf, "must be a PDF")
@@ -36,25 +35,26 @@ class Book < ApplicationRecord
   end
 
   # Extract page count from attached PDF
-  def extract_page_count
-    return unless pdf.attached?
+  # def extract_page_count
+  #   # return unless pdf.attached?
 
-    reader = PDF::Reader.new(pdf.download)
-    self.page_count = reader.page_count
-  end
+  #   reader = PDF::Reader.new(pdf.download)
+  #   self.page_count = reader.page_count
+  # end
 
   # Extract cover image from attached PDF and attach it
-  def extract_cover_image
-    return unless pdf.attached?
+  # def extract_cover_image
+  #   return unless pdf.attached?
 
-    reader = PDF::Reader.new(pdf.download)
-    # Extract the first image from the first page of the PDF
-    page = reader.pages.first
-    image = page&.images&.first
+  #   reader = PDF::Reader.new(pdf.download)
+  #   # Extract the first image from the first page of the PDF
+  #   page = reader.pages.first
+  #   image = page&.images&.first
 
-    return unless image
+  #   return unless image
 
-    # Attach the extracted image as the cover image
-    cover_image.attach(io: StringIO.new(image.data), filename: "cover_image.jpg", content_type: "image/jpeg")
-  end
+  #   # Attach the extracted image as the cover image
+  #   cover_image.attach(io: StringIO.new(image.data), filename: "cover_image.jpg", content_type: "image/jpeg")
+  # end
+
 end
