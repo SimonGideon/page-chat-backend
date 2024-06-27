@@ -34,6 +34,7 @@ class Book < ApplicationRecord
     end
   end
 
+  # Extract page count from attached PDF
   # def extract_page_count
   #   # return unless pdf.attached?
 
