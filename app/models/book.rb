@@ -5,10 +5,9 @@ class Book < ApplicationRecord
   validates :title, :description, :language, :published_at, presence: true
   validates :featured, inclusion: { in: [true, false] }
   # validate :only_pdf
-  validate :acceptable_images
+  # validate :acceptable_images
   # before_save :extract_page_count
   # before_save :extract_cover_image, if: -> { pdf.attached? && !cover_image.attached? }
-
   private
 
   # PDF upload content-type validation
@@ -20,19 +19,19 @@ class Book < ApplicationRecord
     end
   end
 
-  # Cover image upload validation
-  def acceptable_images
-    return unless cover_image.attached?
+  # # Cover image upload validation
+  # def acceptable_images
+  #   return unless cover_image.attached?
 
-    unless cover_image.byte_size <= 1.megabyte
-      errors.add(:cover_image, "is too big")
-    end
+  #   unless cover_image.byte_size <= 1.megabyte
+  #     errors.add(:cover_image, "is too big")
+  #   end
 
-    acceptable_types = ["image/png", "image/jpg", "image/jpeg", "image/avif", "image/webp", "image/svg+xml"]
-    unless acceptable_types.include?(cover_image.content_type)
-      errors.add(:cover_image, "must be a JPEG, JPG, AVIF, WEBP, SVG, or PNG")
-    end
-  end
+  #   acceptable_types = ["image/png", "image/jpg", "image/jpeg", "image/avif", "image/webp", "image/svg+xml"]
+  #   unless acceptable_types.include?(cover_image.content_type)
+  #     errors.add(:cover_image, "must be a JPEG, JPG, AVIF, WEBP, SVG, or PNG")
+  #   end
+  # end
 
   # Extract page count from attached PDF
   # def extract_page_count
