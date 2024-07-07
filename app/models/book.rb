@@ -1,6 +1,9 @@
 class Book < ApplicationRecord
   has_one_attached :pdf
   has_one_attached :cover_image
+  belongs_to :author
+  belongs_to :category
+  has_many :favorites, dependent: :destroy
 
   validates :title, :description, :language, :published_at, presence: true
   validates :featured, inclusion: { in: [true, false] }
@@ -32,11 +35,6 @@ class Book < ApplicationRecord
     unless acceptable_types.include?(cover_image.content_type)
       errors.add(:cover_image, "must be a JPEG, JPG, AVIF, WEBP, SVG, or PNG")
     end
-  end
-
-  # extract first page covert to image as cover image
-  def extract_cover_image
-    return unless pdf.attached?
   end
 
   # Extract page count from attached PDF
