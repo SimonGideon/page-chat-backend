@@ -7,8 +7,8 @@ class CreateFavorites < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_foreign_key :favorites, :users, column: :user_id, type: :uuid
-    add_foreign_key :favorites, :books, column: :book_id, type: :uuid
+    add_reference :users, :favorites, type: :uuid, foreign_key: true
+    add_reference :books, :favorites, type: :uuid, foreign_key: true
 
     add_index :favorites, :user
     add_index :favorites, :book
