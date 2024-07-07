@@ -1,4 +1,4 @@
 class CartegorySerializer
   include JSONAPI::Serializer
-  attributes 
+  attributes :id, :name, :description
 end

@@ -2,11 +2,8 @@ class AuthorsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    render json: Author.all
-  end
-
-  def show
-    render json: Author.find(params[:id])
+    authors = Author.all
+    render json: authors
   end
 
   def create
