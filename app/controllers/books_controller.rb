@@ -15,7 +15,7 @@ class BooksController < ApplicationController
   # Get a specific book
   def show
     render json: {
-      status: { code: 200, message: "Successfully fetched book." },
+      status: { code: 200 },
       data: BookSerializer.new(@book).serializable_hash[:data][:attributes],
     }, status: :ok
   end
