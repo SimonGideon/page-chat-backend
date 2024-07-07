@@ -11,4 +11,7 @@ Rails.application.routes.draw do
                      }
   resources :users, only: %i[index], controller: "users/users"
   resources :books
+  resources :authors
+  resources :favorites
+  resources :categories
 end
