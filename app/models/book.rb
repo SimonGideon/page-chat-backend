@@ -5,7 +5,7 @@ class Book < ApplicationRecord
   belongs_to :category
   has_many :favorites, dependent: :destroy
 
-  validates :title, :description, :language, :published_at, presence: true
+  validates :title, :description, :language, :published_at, presence: true, uniqueness: true
   validates :featured, inclusion: { in: [true, false] }
   validate :only_pdf
   validate :acceptable_images

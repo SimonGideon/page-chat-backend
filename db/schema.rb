@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_07_191931) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_07_202407) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,9 +47,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_191931) do
     t.string "email", null: false
     t.text "biography"
     t.string "website"
-    t.string "twitter"
-    t.string "facebook"
-    t.string "instagram"
+    t.string "social_handle"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["id"], name: "index_authors_on_id"
@@ -67,6 +65,29 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_191931) do
     t.boolean "featured", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "author_id"
+    t.uuid "category_id"
+    t.uuid "favorites_id"
+    t.index ["author_id"], name: "index_books_on_author_id"
+    t.index ["category_id"], name: "index_books_on_category_id"
+    t.index ["favorites_id"], name: "index_books_on_favorites_id"
+  end
+
+  create_table "categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["id"], name: "index_categories_on_id"
+  end
+
+  create_table "favorites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user"
+    t.uuid "book"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book"], name: "index_favorites_on_book"
+    t.index ["user"], name: "index_favorites_on_user"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -86,7 +107,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_191931) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "jti", null: false
+    t.uuid "favorites_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["favorites_id"], name: "index_users_on_favorites_id"
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["membership_number"], name: "index_users_on_membership_number", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -94,4 +117,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_07_191931) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "books", "authors"
+  add_foreign_key "books", "categories"
+  add_foreign_key "books", "favorites", column: "favorites_id"
+  add_foreign_key "users", "favorites", column: "favorites_id"
 end
