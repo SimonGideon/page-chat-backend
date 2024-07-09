@@ -11,7 +11,10 @@ class FavoritesController < ApplicationController
   def create
     favorite = Favorite.new(favorite_params)
     if favorite.save
-      render json: favorite, status: :created
+      render json: {
+        status: { code: 200, message: "Successfully created favorite." },
+        data: FavoriteSerializer.new(favorite).serializable_hash[:data][:attributes],
+      }, status: :ok
     else
       render json: favorite.errors, status: :unprocessable_entity
     end

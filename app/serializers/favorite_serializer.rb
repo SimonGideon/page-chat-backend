@@ -1,6 +1,6 @@
 class FavoriteSerializer
   include JSONAPI::Serializer
-  attributes :id, :user_id, :book_id
+  attributes :id, :user, :book
 
-  belongs_to :book, serializer: BookSerializer
+  # belongs_to :book, serializer: BookSerializer
 end
