@@ -9,9 +9,11 @@ Rails.application.routes.draw do
                        sessions: "users/sessions",
                        registrations: "users/registrations",
                      }
-  resources :users, only: %i[index], controller: "users/users"
+  resources :users, only: %i[index], controller: "users/users" do
+    resources :favorites, only: [:index]
+  end
   resources :books
   resources :authors
-  resources :favorites
+  resources :favorites, only: [:create, :show, :index, :destroy]
   resources :categories
 end
