@@ -2,11 +2,11 @@ class FavoritesController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    favorites = Favorite.all
+    books = Book.joins(:favorites).where(favorites: { user_id: current_user.id })
     render json: {
       status: { code: 200, message: "Successfully fetched favorites." },
-      data: FavoriteSerializer.new(favorites).serializable_hash[:data].map { |favorite| favorite[:attributes] },
-    }, status: :ok
+      data: BookSerializer.new(books).serializable_hash[:data].map { |book| book[:attributes] },
+    }
   end
 
   def show
