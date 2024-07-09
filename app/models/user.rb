@@ -13,6 +13,7 @@ class User < ApplicationRecord
 
   validates :email, :membership_number, :jti, uniqueness: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  has_many :favorites, dependent: :destroy
 
   private
 
