@@ -12,7 +12,11 @@ Rails.application.routes.draw do
   resources :users, only: %i[index], controller: "users/users" do
     resources :favorites, only: [:index]
   end
-  resources :books
+  resources :books do
+    resources :discussions do
+      resources :comments
+    end
+  end
   resources :authors
   resources :favorites, only: [:create, :show, :index, :destroy]
   resources :categories
