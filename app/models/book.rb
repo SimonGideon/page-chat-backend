@@ -6,7 +6,12 @@ class Book < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :favorited_by_users, through: :favorites, source: :user
 
-  validates :title, :description, :language, :published_at, presence: true, uniqueness: true
+  validates :language, :published_at, presence: true
+  # validates :pdf, :cover_image, attached: true, uniqueness: true
+
+  validates :title, :description, presence: true
+  validates :title, length: { minimum: 5 }
+  validates :description, length: { minimum: 10 }
   validates :featured, inclusion: { in: [true, false] }
   validate :only_pdf
   validate :acceptable_images
@@ -53,8 +58,10 @@ class Book < ApplicationRecord
   end
 
   def unique_title_author_combination
-    if Book.exists?(title: title, author_id: author_id)
-      errors.add(:base, "Book with the same title and author already exists")
+    return unless author_id.present?
+
+    if Book.where(author_id: author_id, title: title).exists?
+      errors.add(:title, "Book Already Exists")
     end
   end
 end
