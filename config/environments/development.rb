@@ -22,7 +22,7 @@ Rails.application.configure do
   if Rails.root.join("tmp/caching-dev.txt").exist?
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      "Cache-Control" => "public, max-age=#{2.days.to_i}"
+      "Cache-Control" => "public, max-age=#{2.days.to_i}",
     }
   else
     config.action_controller.perform_caching = false
@@ -57,9 +57,7 @@ Rails.application.configure do
   config.active_job.verbose_enqueue_logs = true
 
   # devise action mailer
-  config.action_mailer.default_url_options = { host: 'localhost', port: 4000 }
-
-
+  config.action_mailer.default_url_options = { host: "localhost", port: 4000 }
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
@@ -72,4 +70,6 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+  Rails.application.routes.default_url_options = { host: "localhost", port: 4000 }
 end

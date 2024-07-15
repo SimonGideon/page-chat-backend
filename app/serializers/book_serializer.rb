@@ -1,3 +1,4 @@
+# app/serializers/book_serializer.rb
 class BookSerializer
   include JSONAPI::Serializer
   include Rails.application.routes.url_helpers
@@ -6,13 +7,13 @@ class BookSerializer
 
   attribute :pdf_url do |book|
     if book.pdf.attached?
-      Rails.application.routes.url_helpers.rails_blob_path(book.pdf, only_path: true)
+      Rails.application.routes.url_helpers.url_for(book.pdf)
     end
   end
 
   attribute :cover_image_url do |book|
     if book.cover_image.attached?
-      Rails.application.routes.url_helpers.rails_blob_path(book.cover_image, only_path: true)
+      Rails.application.routes.url_helpers.url_for(book.cover_image)
     end
   end
 
