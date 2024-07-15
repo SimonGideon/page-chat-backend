@@ -10,6 +10,7 @@ class Book < ApplicationRecord
   validates :featured, inclusion: { in: [true, false] }
   validate :only_pdf
   validate :acceptable_images
+  validate :unique_title_author_combination
 
   after_commit :extract_page_count, if: :pdf_attached?
 
@@ -49,5 +50,11 @@ class Book < ApplicationRecord
   # Check if the PDF is attached
   def pdf_attached?
     pdf.attached?
+  end
+
+  def unique_title_author_combination
+    if Book.exists?(title: title, author_id: author_id)
+      errors.add(:base, "Book with the same title and author already exists")
+    end
   end
 end
