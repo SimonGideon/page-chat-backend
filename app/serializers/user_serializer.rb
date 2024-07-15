@@ -1,8 +1,16 @@
 class UserSerializer
   include JSONAPI::Serializer
-  attributes :id, :email, :first_name, :last_name, :phone, :home_church, :residence, :city, :date_of_birth, :membership_number, :created_at
+  include Rails.application.routes.url_helpers
+
+  attributes :id, :email, :first_name, :last_name, :phone, :home_church, :residence, :city, :date_of_birth, :membership_number, :avatar_url
+
+  attribute :avatar_url do |user|
+    if user.avatar.attached?
+      Rails.application.routes.url_helpers.url_for(user.avatar)
+    end
+  end
+
   attribute :created_date do |user|
-    user.created_at && user.created_at.strftime('%m/%d/%Y')
+    user.created_at && user.created_at.strftime("%m/%d/%Y")
   end
 end
-
