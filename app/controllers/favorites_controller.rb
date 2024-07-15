@@ -2,10 +2,26 @@ class FavoritesController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    user = User.find(params[:user_id])
+    books = Book.joins(:favorites).where(favorites: { user_id: current_user.id })
+    render json: {
+      status: { code: 200, message: "Successfully fetched favorites." },
+      data: BookSerializer.new(books).serializable_hash[:data].map { |book| book[:attributes] },
+    }
+  end
+
+  def show
+    user = User.includes(:favorites).find(params[:id])  # Load user with associated favorites
     favorites = user.favorites
 
-    render json: favorites, each_serializer: FavoriteSerializer
+    render json: {
+      status: { code: 200, message: "Successfully fetched favorites." },
+      data: FavoriteSerializer.new(favorites).serializable_hash[:data].map { |fav| fav[:attributes] },
+    }, status: :ok
+  rescue ActiveRecord::RecordNotFound => e
+    render json: {
+      status: { code: 404, message: "User not found." },
+      errors: e.message,
+    }, status: :not_found
   end
 
   def create
