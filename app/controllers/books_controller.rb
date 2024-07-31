@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_action :authenticate_user!, except: %i[index show recommended]
+  before_action :authenticate_user!, except: %i[ recommended featured ]
   before_action :set_book, only: %i[show update destroy]
 
   # GET /books
