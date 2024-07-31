@@ -16,6 +16,10 @@ Rails.application.routes.draw do
     resources :discussions do
       resources :comments
     end
+    collection do
+      get :recommended
+      get :featured
+    end
   end
   resources :authors
   resources :favorites, only: [:create, :show, :index, :destroy]
