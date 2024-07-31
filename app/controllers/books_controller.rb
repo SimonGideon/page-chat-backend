@@ -1,10 +1,16 @@
 class BooksController < ApplicationController
-  before_action :authenticate_user!, except: %i[index show]
+  before_action :authenticate_user!, except: %i[index show recommended]
   before_action :set_book, only: %i[show update destroy]
 
   # GET /books
   def index
     @books = Book.all
+    render json: serialized_books(@books), status: :ok
+  end
+
+  #get featured books
+  def featured
+    @books = Book.where(featured: true)
     render json: serialized_books(@books), status: :ok
   end
 

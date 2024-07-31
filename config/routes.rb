@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     end
     collection do
       get :recommended
+      get :featured
     end
   end
   resources :authors
