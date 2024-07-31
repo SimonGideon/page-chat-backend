@@ -8,6 +8,12 @@ class BooksController < ApplicationController
     render json: serialized_books(@books), status: :ok
   end
 
+  # get recommended books
+  def recommended
+    @books = Book.where(recommended: true)
+    render json: serialized_books(@books), status: :ok
+  end
+
   # GET /books/:id
   def show
     render json: serialized_book(@book), status: :ok
@@ -55,7 +61,7 @@ class BooksController < ApplicationController
   def book_params
     params.require(:book).permit(
       :title, :description, :language,
-      :publisher, :isbn, :page_count, :author_id, :category_id,
+      :publisher, :isbn, :page_count, :author_id, :category_id, :recommended,
       boo: [:pdf, :cover_image],
     ).with_defaults(published_at: Time.now)
   end
