@@ -1,10 +1,22 @@
 class BooksController < ApplicationController
-  before_action :authenticate_user!, except: %i[index show]
+  before_action :authenticate_user!, except: %i[ recommended featured ]
   before_action :set_book, only: %i[show update destroy]
 
   # GET /books
   def index
     @books = Book.all
+    render json: serialized_books(@books), status: :ok
+  end
+
+  #get featured books
+  def featured
+    @books = Book.where(featured: true)
+    render json: serialized_books(@books), status: :ok
+  end
+
+  # get recommended books
+  def recommended
+    @books = Book.where(recommended: true)
     render json: serialized_books(@books), status: :ok
   end
 
@@ -55,7 +67,7 @@ class BooksController < ApplicationController
   def book_params
     params.require(:book).permit(
       :title, :description, :language,
-      :publisher, :isbn, :page_count, :author_id, :category_id,
+      :publisher, :isbn, :page_count, :author_id, :category_id, :recommended,
       boo: [:pdf, :cover_image],
     ).with_defaults(published_at: Time.now)
   end

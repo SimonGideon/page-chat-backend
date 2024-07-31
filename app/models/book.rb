@@ -18,6 +18,7 @@ class Book < ApplicationRecord
   validate :unique_title_author_combination
 
   after_commit :extract_page_count, if: :pdf_attached?
+  before_validation :set_recommended
 
   private
 
@@ -28,6 +29,11 @@ class Book < ApplicationRecord
     unless pdf.content_type == "application/pdf"
       errors.add(:pdf, "Book must be a PDF")
     end
+  end
+
+  # set recommended to false if not present
+  def set_recommended
+    self.recommended = false if self.recommended.nil?
   end
 
   # Cover image upload validation

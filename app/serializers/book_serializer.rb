@@ -3,7 +3,7 @@ class BookSerializer
   include JSONAPI::Serializer
   include Rails.application.routes.url_helpers
 
-  attributes :id, :title, :description, :language, :publisher, :page_count, :isbn, :featured, :published_at, :pdf_url, :cover_image_url, :published_date, :author, :category
+  attributes :id, :title, :description, :language, :publisher, :page_count, :isbn, :featured, :recommended, :published_at, :pdf_url, :cover_image_url, :published_date, :author, :category
 
   attribute :pdf_url do |book|
     if book.pdf.attached?
