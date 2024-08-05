@@ -4,10 +4,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   private
 
+  def sign_up_params
+    params.require(:user).permit(:email, :first_name, :last_name, :phone, :home_church, :residence, :city, :date_of_birth, :membership_number, :avatar)
+  end
+
+  def account_update_params
+    params.require(:user).permit(:email, :first_name, :last_name, :phone, :home_church, :residence, :city, :date_of_birth, :membership_number, :current_password, :avatar)
+  end
+
   def respond_with(resource, _opts = {})
     if request.method == "POST" && resource.persisted?
       render json: {
-        status: { code: 200, message: "Signed up sucessfully." },
+        status: { code: 200, message: "Signed up successfully." },
         data: UserSerializer.new(resource).serializable_hash[:data][:attributes],
       }, status: :ok
     elsif request.method == "DELETE"
