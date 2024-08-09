@@ -13,4 +13,9 @@ class UserSerializer
   attribute :created_date do |user|
     user.created_at && user.created_at.strftime("%m/%d/%Y")
   end
+
+  # format date of birth
+  attribute :date_of_birth do |user|
+    user.date_of_birth && user.date_of_birth.strftime("%m/%d/%Y")
+  end
 end
