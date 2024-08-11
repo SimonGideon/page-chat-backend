@@ -10,7 +10,7 @@ class FavoritesController < ApplicationController
   end
 
   def show
-    user = User.includes(:favorites).find(params[:id])  # Load user with associated favorites
+    user = User.includes(:favorites).find(params[:id])
     favorites = user.favorites
 
     render json: {
