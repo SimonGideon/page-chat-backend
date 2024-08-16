@@ -4,7 +4,6 @@ class Book < ApplicationRecord
   belongs_to :author
   belongs_to :category
   has_many :favorites, dependent: :destroy
-  has_many :favorited_by_users, through: :favorites, source: :user
 
   validates :language, :published_at, presence: true
   # validates :pdf, :cover_image, attached: true, uniqueness: true
