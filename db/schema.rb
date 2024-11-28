@@ -67,11 +67,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_185107) do
     t.datetime "updated_at", null: false
     t.uuid "author_id"
     t.uuid "category_id"
-    t.uuid "favorites_id"
     t.boolean "recommended", default: false
     t.index ["author_id"], name: "index_books_on_author_id"
     t.index ["category_id"], name: "index_books_on_category_id"
-    t.index ["favorites_id"], name: "index_books_on_favorites_id"
+    t.index ["title"], name: "index_books_on_title", unique: true
   end
 
   create_table "categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -93,19 +92,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_185107) do
   end
 
   create_table "discussions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "title", null: false
+    t.text "body", null: false
     t.uuid "book"
     t.uuid "user"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "title"
-    t.text "body"
     t.index ["book"], name: "index_discussions_on_book"
     t.index ["user"], name: "index_discussions_on_user"
   end
 
   create_table "favorites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "user_id"
-    t.uuid "book_id"
+    t.uuid "user_id", null: false
+    t.uuid "book_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["book_id"], name: "index_favorites_on_book_id"
@@ -129,9 +128,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_185107) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "jti", null: false
-    t.uuid "favorites_id"
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["favorites_id"], name: "index_users_on_favorites_id"
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["membership_number"], name: "index_users_on_membership_number", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -141,6 +138,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_185107) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "books", "authors"
   add_foreign_key "books", "categories"
-  add_foreign_key "books", "favorites", column: "favorites_id"
-  add_foreign_key "users", "favorites", column: "favorites_id"
+  add_foreign_key "favorites", "books"
+  add_foreign_key "favorites", "users"
 end
