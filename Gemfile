@@ -28,6 +28,8 @@ gem "redis", ">= 4.0.1"
 
 # serializer
 gem "jsonapi-serializer"
+gem "rswag-api"
+gem "rswag-ui"
 # # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
@@ -65,6 +67,7 @@ group :development, :test do
   gem "factory_bot_rails"
   # faker
   gem "faker"
+  gem "rswag-specs"
 end
 
 group :development do

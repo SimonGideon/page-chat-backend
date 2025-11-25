@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Users::SessionsController, type: :controller do
+RSpec.describe Api::V1::Users::SessionsController, type: :controller do
   include Devise::Test::ControllerHelpers
   before do
     @request.env["devise.mapping"] = Devise.mappings[:user]
