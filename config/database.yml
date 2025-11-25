@@ -18,20 +18,17 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV["POSTGRES_USER"] || Rails.application.credentials.dig(:postgres, :user) || "postgres" %>
+  password: <%= ENV["POSTGRES_PASSWORD"] || Rails.application.credentials.dig(:postgres, :password) || "postgres" %>
 
 development:
   <<: *default
-  database: faith_reads_development
+  database: page_chat_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
   # When left blank, PostgreSQL will use the default role. This is
   # the same name as the operating system user running Rails.
-  #username: faith_reads
-
-  # The password associated with the PostgreSQL role (username).
-  #password:
-
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
   # domain sockets, so uncomment these lines.
@@ -39,7 +36,7 @@ development:
 
   # The TCP port the server listens on. Defaults to 5432.
   # If your server runs on a different port number, change accordingly.
-  #port: 5432
+  port: 5432
 
   # Schema search path. The server defaults to $user,public
   #schema_search_path: myapp,sharedapp,public
@@ -55,7 +52,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: faith_reads_test
+  database: page_chat_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -79,6 +76,6 @@ test:
 #
 production:
   <<: *default
-  database: faith_reads_production
-  username: faith_reads
-  password: <%= ENV["FAITH_READS_DATABASE_PASSWORD"] %>
+  database: page_chat_production
+  username: page_chat
+  password: <%= ENV["PAGE_CHAT_DATABASE_PASSWORD"] %>
