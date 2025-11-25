@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Users::RegistrationsController, type: :controller do
+RSpec.describe Api::V1::Users::RegistrationsController, type: :controller do
   include Devise::Test::ControllerHelpers # Include this module
 
   before do
