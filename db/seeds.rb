@@ -16,9 +16,11 @@ puts "Seeding default users..."
     user.last_name = Faker::Name.last_name
     user.membership_number = format("M%04d", index + 1)
     user.phone = "555-000-#{format('%04d', index)}"
-    user.home_church = "#{Faker::Address.city} Community Church"
-    user.residence = Faker::Address.street_address
+    user.address = Faker::Address.street_address
     user.city = Faker::Address.city
+    user.country = Faker::Address.country
+    user.gender = %w[female male non_binary unspecified].sample
+    user.nationality = Faker::Nation.nationality
     user.date_of_birth = Faker::Date.birthday(min_age: 21, max_age: 65)
     user.password = "Password123!"
     user.password_confirmation = "Password123!"

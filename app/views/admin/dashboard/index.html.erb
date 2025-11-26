@@ -1,0 +1,45 @@
+<div class="dashboard">
+  <div class="dashboard__stats">
+    <div class="dashboard__card">
+      <span class="dashboard__label">Books</span>
+      <span class="dashboard__value"><%= number_with_delimiter(@book_count) %></span>
+    </div>
+    <div class="dashboard__card">
+      <span class="dashboard__label">Authors</span>
+      <span class="dashboard__value"><%= number_with_delimiter(@author_count) %></span>
+    </div>
+    <div class="dashboard__card">
+      <span class="dashboard__label">Categories</span>
+      <span class="dashboard__value"><%= number_with_delimiter(@category_count) %></span>
+    </div>
+    <div class="dashboard__card">
+      <span class="dashboard__label">Members</span>
+      <span class="dashboard__value"><%= number_with_delimiter(@user_count) %></span>
+    </div>
+  </div>
+
+  <div class="dashboard__recent">
+    <h2>Recently Added Books</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Published</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_books.each do |book| %>
+          <tr>
+            <td><%= book.title %></td>
+            <td><%= book.author&.name || "—" %></td>
+            <td><%= book.category&.name || "—" %></td>
+            <td><%= book.published_at&.strftime("%b %d, %Y") || "—" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+

@@ -603,11 +603,15 @@ components:
           type: string
         phone:
           type: string
-        home_church:
-          type: string
-        residence:
+        address:
           type: string
         city:
+          type: string
+        country:
+          type: string
+        gender:
+          type: string
+        nationality:
           type: string
         date_of_birth:
           type: string

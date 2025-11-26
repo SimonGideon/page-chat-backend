@@ -20,6 +20,10 @@ Rails.application.routes.draw do
         resources :favorites, only: [:index]
       end
 
+      post "/password/reset", to: "users/passwords#create"
+      get "/password/reset", to: "users/passwords#show"
+      put "/password/reset", to: "users/passwords#update"
+
       resources :books do
         resources :discussions do
           resources :comments
