@@ -11,8 +11,9 @@ class ApplicationController < ActionController::API
   def configure_sign_up_params
     devise_parameter_sanitizer.permit(:sign_up, keys: [
                                                   :email, :password, :password_confirmation, :first_name,
-                                                  :last_name, :phone, :home_church, :residence, :city,
-                                                  :date_of_birth, :membership_number,
+                                                  :last_name, :phone, :address, :country,
+                                                  :gender, :nationality, :city, :date_of_birth,
+                                                  :membership_number,
                                                 ])
   end
 end

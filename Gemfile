@@ -11,6 +11,9 @@ gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
+# Gemfile
+gem "sprockets-rails", require: "sprockets/railtie"
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
@@ -30,6 +33,8 @@ gem "redis", ">= 4.0.1"
 gem "jsonapi-serializer"
 gem "rswag-api"
 gem "rswag-ui"
+# Admin UI
+gem "trestle"
 # # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
@@ -60,6 +65,7 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
+  gem "dotenv-rails"
   gem "rspec-rails", "~> 6.1.0"
   # buybug
   gem "byebug"

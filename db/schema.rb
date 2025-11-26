@@ -121,17 +121,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_31_185107) do
     t.string "first_name", null: false
     t.string "last_name", null: false
     t.bigint "phone", null: false
-    t.string "home_church", null: false
-    t.string "residence", null: false
+    t.string "address", default: "", null: false
+    t.string "country", default: "", null: false
+    t.string "gender", default: "unspecified", null: false
+    t.string "nationality", default: "", null: false
     t.string "city", null: false
     t.date "date_of_birth", null: false
+    t.string "jti", null: false
+    t.string "status", default: "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "jti", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["membership_number"], name: "index_users_on_membership_number", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["status"], name: "index_users_on_status"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
