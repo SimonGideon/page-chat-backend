@@ -4,15 +4,19 @@ class User < ApplicationRecord
   before_create :generate_jti
   has_one_attached :avatar
 
+  belongs_to :country, foreign_key: :country_code, primary_key: :code, optional: true
+  belongs_to :city, optional: true
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
-  validates :email, :membership_number, :first_name, :last_name,
-            :phone, :address, :country, :gender, :nationality,
-            :city, :date_of_birth, presence: true
+  validates :email, :first_name, :last_name,
+            :phone, :address, :gender,
+            :date_of_birth, presence: true
+  validates :country_code, :city_id, presence: true
 
-  validates :email, :membership_number, :jti, uniqueness: true
+  validates :email, :jti, uniqueness: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   enum status: {

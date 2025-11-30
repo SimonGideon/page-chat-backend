@@ -28,7 +28,6 @@ Trestle.resource(:users) do
     column :first_name
     column :last_name
     column :email
-    column :membership_number
     column :phone
     column :status, -> (user) { user.status.titleize }, align: :center
     column :city
@@ -56,13 +55,11 @@ Trestle.resource(:users) do
     text_field :first_name
     text_field :last_name
     text_field :email
-    text_field :membership_number
     text_field :phone
     text_field :address
     text_field :city
     text_field :country
     select :gender, [["Female", "female"], ["Male", "male"], ["Non-binary", "non_binary"], ["Unspecified", "unspecified"]]
-    text_field :nationality
     date_field :date_of_birth
 
     select :status, User.statuses.keys.map { |key| [key.titleize, key] }
@@ -99,12 +96,10 @@ Trestle.resource(:users) do
       :first_name,
       :last_name,
       :email,
-      :membership_number,
       :phone,
       :address,
       :country,
       :gender,
-      :nationality,
       :city,
       :date_of_birth,
       :status,
