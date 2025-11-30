@@ -2,8 +2,28 @@ class UserSerializer
   include JSONAPI::Serializer
   include Rails.application.routes.url_helpers
 
-  attributes :id, :email, :first_name, :last_name, :phone, :address, :country,
-             :gender, :nationality, :city, :date_of_birth, :membership_number, :avatar_url
+  attributes :id, :email, :first_name, :last_name, :phone, :address,
+             :gender, :date_of_birth, :avatar_url
+
+  attribute :country do |user|
+    user.country&.name || user.read_attribute(:country)
+  end
+
+  attribute :country_code do |user|
+    user.country&.code
+  end
+
+  attribute :city do |user|
+    user.city&.name || user.read_attribute(:city)
+  end
+
+  attribute :city_id do |user|
+    user.city_id
+  end
+
+  attribute :country_code do |user|
+    user.country_code
+  end
 
   attribute :avatar_url do |user|
     if user.avatar.attached?
