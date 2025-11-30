@@ -33,14 +33,12 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
       # t.datetime :locked_at
 
       ## Custom attributes
-      t.string :membership_number, null: false
       t.string :first_name, null: false
       t.string :last_name, null: false
       t.bigint :phone, null: false
       t.string :address, null: false, default: ""
       t.string :country, null: false, default: ""
       t.string :gender, null: false, default: "unspecified"
-      t.string :nationality, null: false, default: ""
       t.string :city, null: false
       t.date :date_of_birth, null: false
       t.string :jti, null: false
@@ -51,7 +49,6 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
 
     add_index :users, :email,                unique: true
     add_index :users, :reset_password_token, unique: true
-    add_index :users, :membership_number, unique: true
     add_index :users, :jti, unique: true
     add_index :users, :status
     # add_index :users, :confirmation_token,   unique: true

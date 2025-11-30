@@ -37,6 +37,11 @@ Rails.application.routes.draw do
       resources :authors
       resources :favorites, only: [:create, :show, :index, :destroy]
       resources :categories
+      resources :countries, only: [:index, :show] do
+        resources :cities, only: [:index], controller: "cities"
+      end
+      resources :cities, only: [:index, :show]
+      post "/dropdown/get-drop-down-list", to: "dropdown#get_drop_down_list"
     end
   end
 end
