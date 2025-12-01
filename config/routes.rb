@@ -8,21 +8,27 @@ Rails.application.routes.draw do
                            sign_in: "login",
                            sign_out: "logout",
                            registration: "signup",
+                           confirmation: "activate-account",
                          },
                          controllers: {
                            sessions: "api/v1/users/sessions",
                            registrations: "api/v1/users/registrations",
+                           confirmations: "api/v1/users/confirmations",
                          }
 
       get "/current_user", to: "users/current_user#index"
+      patch "/users/change_password", to: "users/users#change_password"
 
-      resources :users, only: %i[index], controller: "users/users" do
+      resources :users, only: %i[index update], controller: "users/users" do
         resources :favorites, only: [:index]
       end
 
       post "/password/reset", to: "users/passwords#create"
       get "/password/reset", to: "users/passwords#show"
       put "/password/reset", to: "users/passwords#update"
+
+      # Use Devise's confirmation routes
+      get "/activate-account", to: "users/confirmations#show"
 
       resources :books do
         resources :discussions do

@@ -9,7 +9,7 @@ class User < ApplicationRecord
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :jwt_authenticatable, jwt_revocation_strategy: self
+         :confirmable, :jwt_authenticatable, jwt_revocation_strategy: self
 
   validates :email, :first_name, :last_name,
             :phone, :address, :gender,
@@ -18,6 +18,18 @@ class User < ApplicationRecord
 
   validates :email, :jti, uniqueness: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+
+  def active_for_authentication?
+    super && confirmed?
+  end
+
+  def inactive_message
+    if !confirmed?
+      :unconfirmed
+    else
+      super
+    end
+  end
 
   enum status: {
     active: "active",
@@ -45,8 +57,9 @@ class User < ApplicationRecord
     throw :abort
   end
 
-  # set password to be phone number if password is empty
   def password_required?
+    return false if new_record?
+    return true if reset_password_token.present?
     super && phone.present?
   end
 end
