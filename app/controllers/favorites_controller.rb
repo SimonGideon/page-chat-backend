@@ -1,4 +1,6 @@
 class FavoritesController < ApplicationController
+  include JwtAuthenticatable
+  
   before_action :authenticate_user!
 
   def index

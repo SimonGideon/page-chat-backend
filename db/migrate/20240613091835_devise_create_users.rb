@@ -43,6 +43,9 @@ class DeviseCreateUsers < ActiveRecord::Migration[7.1]
       t.date :date_of_birth, null: false
       t.string :jti, null: false
       t.string :status, null: false, default: "active"
+
+
+
  
        t.timestamps null: false
     end
