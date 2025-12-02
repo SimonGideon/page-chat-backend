@@ -1,7 +1,7 @@
 Trestle.resource(:users) do
   remove_action :destroy
   menu do
-    item :members, icon: "fa fa-users", priority: 2
+    item :users, icon: "fa fa-users", priority: 2, label: "Users"
   end
 
   routes do
@@ -30,8 +30,8 @@ Trestle.resource(:users) do
     column :email
     column :phone
     column :status, -> (user) { user.status.titleize }, align: :center
-    column :city
-    column :country
+    column :city, -> (user) { user.city&.name || "N/A" }
+    column :country, -> (user) { user.country&.name || "N/A" }
     column :gender, align: :center
     column :created_at, align: :center
     actions do |toolbar|

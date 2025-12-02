@@ -4,19 +4,19 @@ class BooksController < ApplicationController
 
   # GET /books
   def index
-    @books = Book.all
+    @books = Book.includes(:author, :category).with_attached_pdf.with_attached_cover_image
     render json: serialized_books(@books), status: :ok
   end
 
   #get featured books
   def featured
-    @books = Book.where(featured: true)
+    @books = Book.where(featured: true).includes(:author, :category).with_attached_pdf.with_attached_cover_image
     render json: serialized_books(@books), status: :ok
   end
 
   # get recommended books
   def recommended
-    @books = Book.where(recommended: true)
+    @books = Book.where(recommended: true).includes(:author, :category).with_attached_pdf.with_attached_cover_image
     render json: serialized_books(@books), status: :ok
   end
 

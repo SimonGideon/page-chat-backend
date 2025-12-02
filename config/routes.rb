@@ -30,7 +30,7 @@ Rails.application.routes.draw do
       # Use Devise's confirmation routes
       get "/activate-account", to: "users/confirmations#show"
 
-      resources :books do
+      resources :books, only: %i[index show] do
         resources :discussions do
           resources :comments
         end
@@ -40,7 +40,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :authors
+      resources :authors, only: %i[index show]
       resources :favorites, only: [:create, :show, :index, :destroy]
       resources :categories
       resources :countries, only: [:index, :show] do

@@ -7,13 +7,37 @@ class BookSerializer
 
   attribute :pdf_url do |book|
     if book.pdf.attached?
-      Rails.application.routes.url_helpers.url_for(book.pdf)
+      begin
+        # Try to use url_for first (works if request context is available)
+        Rails.application.routes.url_helpers.url_for(book.pdf)
+      rescue
+        # Fallback: build URL manually using default_url_options
+        path = Rails.application.routes.url_helpers.rails_blob_path(book.pdf, only_path: true)
+        default_options = Rails.application.routes.default_url_options || {}
+        host = default_options[:host] || "localhost"
+        port = default_options[:port]
+        protocol = default_options[:protocol] || "http"
+        port_str = port ? ":#{port}" : ""
+        "#{protocol}://#{host}#{port_str}#{path}"
+      end
     end
   end
 
   attribute :cover_image_url do |book|
     if book.cover_image.attached?
-      Rails.application.routes.url_helpers.url_for(book.cover_image)
+      begin
+        # Try to use url_for first (works if request context is available)
+        Rails.application.routes.url_helpers.url_for(book.cover_image)
+      rescue
+        # Fallback: build URL manually using default_url_options
+        path = Rails.application.routes.url_helpers.rails_blob_path(book.cover_image, only_path: true)
+        default_options = Rails.application.routes.default_url_options || {}
+        host = default_options[:host] || "localhost"
+        port = default_options[:port]
+        protocol = default_options[:protocol] || "http"
+        port_str = port ? ":#{port}" : ""
+        "#{protocol}://#{host}#{port_str}#{path}"
+      end
     end
   end
 
