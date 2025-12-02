@@ -42,16 +42,12 @@ Trestle.resource(:books) do
     tab :media do
       file_field :cover_image
       if book.cover_image.attached?
-        div class: "mt-2" do
-          span "Current cover: #{book.cover_image.filename}"
-        end
+        concat raw('<div class="mt-2"><span>Current cover: ' + book.cover_image.filename.to_s + '</span></div>')
       end
 
       file_field :pdf
       if book.pdf.attached?
-        div class: "mt-2" do
-          span "Current PDF: #{book.pdf.filename}"
-        end
+        concat raw('<div class="mt-2"><span>Current PDF: ' + book.pdf.filename.to_s + '</span></div>')
       end
     end
   end
