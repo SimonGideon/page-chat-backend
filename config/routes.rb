@@ -31,6 +31,9 @@ Rails.application.routes.draw do
       get "/activate-account", to: "users/confirmations#show"
 
       resources :books, only: %i[index show] do
+        member do
+           get :preview
+        end
         resources :discussions do
           resources :comments
         end
@@ -41,6 +44,7 @@ Rails.application.routes.draw do
       end
 
       resources :authors, only: %i[index show]
+      get "/engagements", to: "discussions#engagements"
       resources :favorites, only: [:create, :show, :index, :destroy]
       resources :categories
       resources :countries, only: [:index, :show] do

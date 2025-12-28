@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include JwtAuthenticatable
   before_action :configure_sign_up_params, if: :devise_controller?
   rescue_from JWT::ExpiredSignature, with: :handle_jwt_expired
   rescue_from JWT::DecodeError, with: :handle_jwt_invalid

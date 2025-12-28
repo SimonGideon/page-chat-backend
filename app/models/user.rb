@@ -42,6 +42,11 @@ class User < ApplicationRecord
 
   has_many :favorite_books, through: :favorites, source: :book
 
+  def avatar_url
+    return nil unless avatar.attached?
+    Rails.application.routes.url_helpers.url_for(avatar)
+  end
+
   private
 
   def jwt_revoked?(payload, user)

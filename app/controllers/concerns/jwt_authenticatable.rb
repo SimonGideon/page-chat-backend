@@ -24,8 +24,24 @@ module JwtAuthenticatable
       end
     rescue JWT::ExpiredSignature
       render json: { status: { code: 401, message: "Token has expired." } }, status: :unauthorized
-    rescue JWT::DecodeError, ActiveRecord::RecordNotFound
       render json: { status: { code: 401, message: "Invalid token." } }, status: :unauthorized
+    end
+  end
+
+  def authenticate_user_optional
+    token = request.headers['Authorization']&.split(' ')&.last
+    return if token.blank?
+
+    begin
+      decoded = JWT.decode(token, Rails.application.credentials.fetch(:secret_key_base), true, algorithm: 'HS256')
+      user_id = decoded.first['sub']
+      user = User.find_by(id: user_id)
+      
+      if user && user.jti == decoded.first['jti']
+        @current_user = user
+      end
+    rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+      # Ignore errors for optional auth
     end
   end
 end

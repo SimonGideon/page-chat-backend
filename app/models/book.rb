@@ -5,6 +5,7 @@ class Book < ApplicationRecord
   belongs_to :category
   belongs_to :language_ref, class_name: "Language", foreign_key: "language", optional: true
   has_many :favorites, dependent: :destroy
+  has_many :discussions, dependent: :destroy
 
   validates :language, :published_at, presence: true
   # validates :pdf, :cover_image, attached: true, uniqueness: true
