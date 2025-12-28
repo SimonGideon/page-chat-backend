@@ -15,6 +15,15 @@ module Api
             }
           end
           render json: { success: true, data: data }
+        when "languages"
+            languages = Language.order(:name)
+            data = languages.map do |language|
+              {
+                text: language.name,
+                value: language.code,
+              }
+            end
+            render json: { success: true, data: data }
         when "cities"
           country_code = filters["country_code"] || filters[:country_code]
           if country_code.present?
