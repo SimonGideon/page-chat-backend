@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_30_200000) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_28_171611) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -120,12 +120,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_30_200000) do
   create_table "discussions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "title", null: false
     t.text "body", null: false
-    t.uuid "book"
-    t.uuid "user"
+    t.uuid "book_id"
+    t.uuid "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["book"], name: "index_discussions_on_book"
-    t.index ["user"], name: "index_discussions_on_user"
+    t.integer "comments_count", default: 0, null: false
+    t.index ["book_id"], name: "index_discussions_on_book_id"
+    t.index ["user_id"], name: "index_discussions_on_user_id"
   end
 
   create_table "favorites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -135,6 +136,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_30_200000) do
     t.datetime "updated_at", null: false
     t.index ["book_id"], name: "index_favorites_on_book_id"
     t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
+  create_table "languages", primary_key: "code", id: { type: :string, limit: 2 }, force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

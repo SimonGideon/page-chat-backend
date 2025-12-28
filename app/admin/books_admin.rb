@@ -27,7 +27,7 @@ Trestle.resource(:books) do
     tab :details do
       text_field :title
       text_area :description, rows: 4
-      text_field :language
+      select :language, Language.order(:name).pluck(:name, :code), include_blank: "-- Select Language --"
       select :author_id, Author.order(:name).pluck(:name, :id), include_blank: "-- Select Author --"
       select :category_id, Category.order(:name).pluck(:name, :id), include_blank: "-- Select Category --"
       text_field :edition
