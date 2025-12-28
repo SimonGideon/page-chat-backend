@@ -3,6 +3,7 @@ class Book < ApplicationRecord
   has_one_attached :cover_image
   belongs_to :author
   belongs_to :category
+  belongs_to :language_ref, class_name: "Language", foreign_key: "language", optional: true
   has_many :favorites, dependent: :destroy
 
   validates :language, :published_at, presence: true

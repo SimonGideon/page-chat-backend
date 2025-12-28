@@ -5,6 +5,8 @@
 # Example:
 #
 require "faker"
+require_relative "languages_seed"
+
 
 # Country data with ISO3 codes and phone codes
 COUNTRIES_DATA = [
