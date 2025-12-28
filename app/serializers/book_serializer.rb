@@ -44,4 +44,18 @@ class BookSerializer
   attribute :published_date do |book|
     book.published_at&.strftime("%m/%d/%Y")
   end
+
+  attribute :is_favorited do |book, params|
+    if params[:current_user]
+      params[:current_user].favorites.exists?(book_id: book.id)
+    else
+      false
+    end
+  end
+
+  attribute :favorite_id do |book, params|
+    if params[:current_user]
+      params[:current_user].favorites.find_by(book_id: book.id)&.id
+    end
+  end
 end

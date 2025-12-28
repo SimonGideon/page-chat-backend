@@ -1,5 +1,6 @@
 class BooksController < ApplicationController
   before_action :authenticate_user!, except: %i[ recommended featured ]
+  before_action :authenticate_user_optional, only: %i[ recommended featured ]
   before_action :set_book, only: %i[show update destroy]
 
   # GET /books
@@ -78,14 +79,14 @@ class BooksController < ApplicationController
   def serialized_book(book)
     {
       status: { code: 200 },
-      data: BookSerializer.new(book).serializable_hash[:data][:attributes],
+      data: BookSerializer.new(book, { params: { current_user: current_user } }).serializable_hash[:data][:attributes],
     }
   end
 
   def serialized_books(books)
     {
       status: { code: 200, message: "Successfully fetched books." },
-      data: BookSerializer.new(books).serializable_hash[:data].map { |book| book[:attributes] },
+      data: BookSerializer.new(books, { params: { current_user: current_user } }).serializable_hash[:data].map { |book| book[:attributes] },
     }
   end
 end
