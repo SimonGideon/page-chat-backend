@@ -1,8 +1,30 @@
 class CommentsController < ApplicationController
+  before_action :authenticate_user!
+  def index
+    discussion = Discussion.find(params[:discussion_id])
+    page = params[:page] || 1
+    per_page = params[:per_page] || 10
+    
+    offset = (page.to_i - 1) * per_page.to_i
+    # Only fetch top-level comments
+    comments_query = discussion.comments.where(parent_id: nil)
+    total_count = comments_query.count
+    comments = comments_query.includes(:user, replies: [:user]).order(created_at: :desc).limit(per_page).offset(offset)
+    
+    serialized_comments = CommentSerializer.new(comments).serializable_hash[:data].map { |d| d[:attributes] }
+    
+    render json: {
+      data: serialized_comments,
+      meta: { total_count: total_count }
+    }
+  end
+
   def create
     discussion = Discussion.find_by(id: params[:discussion_id])
-    user = User.find_by(id: params[:user_id])  # Assuming you have user_id in the params or can retrieve it
-    comment = Comment.new(discussion: discussion, user: user)
+    user = current_user || User.find_by(id: params[:user_id])
+    comment = Comment.new(comment_params)
+    comment.discussion = discussion
+    comment.user = user
 
     if comment.save
       render json: { status: { code: 201, message: "Comment created successfully." }, data: comment }, status: :created
@@ -28,6 +50,6 @@ class CommentsController < ApplicationController
   private
 
   def comment_params
-    params.require(:comment).permit(:body, :discussion_id, :user_id)
+    params.require(:comment).permit(:body, :parent_id)
   end
 end

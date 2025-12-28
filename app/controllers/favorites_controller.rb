@@ -4,16 +4,20 @@ class FavoritesController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    books = Book.joins(:favorites).where(favorites: { user_id: current_user.id })
+    books = Book.joins(:favorites)
+                .where(favorites: { user_id: current_user.id })
+                .includes(:author, :category)
+                .with_attached_cover_image
+                .with_attached_pdf
     render json: {
       status: { code: 200, message: "Successfully fetched favorites." },
-      data: BookSerializer.new(books).serializable_hash[:data].map { |book| book[:attributes] },
+      data: BookSerializer.new(books, { params: { current_user: current_user } }).serializable_hash[:data].map { |book| book[:attributes] },
     }
   end
 
   def show
-    user = User.includes(:favorites).find(params[:id])
-    favorites = user.favorites
+    user = User.find(params[:id])
+    favorites = user.favorites.includes(book: [:author, :category, :cover_image_attachment, :pdf_attachment])
 
     render json: {
       status: { code: 200, message: "Successfully fetched favorites." },
@@ -28,6 +32,7 @@ class FavoritesController < ApplicationController
 
   def create
     favorite = Favorite.new(favorite_params)
+    favorite.user = current_user
     if favorite.save
       render json: {
         status: { code: 200, message: "Successfully created favorite." },
