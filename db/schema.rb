@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_28_190706) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_29_184955) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -95,6 +95,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_28_190706) do
     t.index ["name"], name: "index_cities_on_name"
   end
 
+  create_table "comment_likes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "comment_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["comment_id", "user_id"], name: "index_comment_likes_on_comment_id_and_user_id", unique: true
+    t.index ["comment_id"], name: "index_comment_likes_on_comment_id"
+    t.index ["user_id"], name: "index_comment_likes_on_user_id"
+  end
+
   create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "discussion_id"
     t.uuid "user_id"
@@ -102,7 +112,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_28_190706) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "parent_id"
+    t.integer "likes_count", default: 0, null: false
     t.index ["discussion_id"], name: "index_comments_on_discussion_id"
+    t.index ["likes_count"], name: "index_comments_on_likes_count"
     t.index ["parent_id"], name: "index_comments_on_parent_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
@@ -183,6 +195,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_28_190706) do
   add_foreign_key "books", "authors"
   add_foreign_key "books", "categories"
   add_foreign_key "cities", "countries", column: "country_code", primary_key: "code"
+  add_foreign_key "comment_likes", "comments"
+  add_foreign_key "comment_likes", "users"
   add_foreign_key "favorites", "books"
   add_foreign_key "favorites", "users"
   add_foreign_key "users", "cities"

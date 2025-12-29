@@ -5,13 +5,12 @@ class BookSerializer
 
   attributes :id, :title, :description, :language, :publisher, :page_count, :isbn, :featured, :recommended, :published_at, :pdf_url, :cover_image_url, :published_date, :author, :category
 
-  attribute :pdf_url do |book|
-    if book.pdf.attached?
+  attribute :pdf_url do |book, params|
+    if params[:current_user] && book.pdf.attached?
+      # Authenticated user: Return full PDF
       begin
-        # Try to use url_for first (works if request context is available)
         Rails.application.routes.url_helpers.url_for(book.pdf)
       rescue
-        # Fallback: build URL manually using default_url_options
         path = Rails.application.routes.url_helpers.rails_blob_path(book.pdf, only_path: true)
         default_options = Rails.application.routes.default_url_options || {}
         host = default_options[:host] || "localhost"
@@ -20,6 +19,9 @@ class BookSerializer
         port_str = port ? ":#{port}" : ""
         "#{protocol}://#{host}#{port_str}#{path}"
       end
+    else
+      # Guest user: Return preview URL
+      Rails.application.routes.url_helpers.preview_api_v1_book_url(book.id, host: (Rails.application.routes.default_url_options[:host] || "localhost:3000"))
     end
   end
 

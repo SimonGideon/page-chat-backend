@@ -35,7 +35,12 @@ Rails.application.routes.draw do
            get :preview
         end
         resources :discussions do
-          resources :comments
+          resources :comments do
+            member do
+              post :like
+              delete :like, action: :unlike
+            end
+          end
         end
         collection do
           get :recommended
