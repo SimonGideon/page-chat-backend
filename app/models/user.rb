@@ -3,6 +3,11 @@ class User < ApplicationRecord
   has_many :favorites, dependent: :destroy
   before_create :generate_jti
   has_one_attached :avatar
+  has_many :discussions, dependent: :destroy
+
+  has_many :reading_positions, dependent: :destroy
+  has_many :currently_reading_books, through: :reading_positions, source: :book
+
 
   belongs_to :country, foreign_key: :country_code, primary_key: :code, optional: true
   belongs_to :city, optional: true
@@ -44,7 +49,7 @@ class User < ApplicationRecord
 
   def avatar_url
     return nil unless avatar.attached?
-    Rails.application.routes.url_helpers.url_for(avatar)
+    Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: false)
   end
 
   private

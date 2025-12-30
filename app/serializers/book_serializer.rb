@@ -60,4 +60,18 @@ class BookSerializer
       params[:current_user].favorites.find_by(book_id: book.id)&.id
     end
   end
+
+  attribute :reading_position do |book, params|
+    if params[:current_user]
+      position = params[:current_user].reading_positions.find_by(book: book)
+      if position
+        {
+          page_number: position.page_number,
+          scroll_offset: position.scroll_offset,
+          percentage_completed: position.percentage_completed,
+          last_read_at: position.last_read_at
+        }
+      end
+    end
+  end
 end
