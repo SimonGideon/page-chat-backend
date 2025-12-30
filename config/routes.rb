@@ -34,6 +34,7 @@ Rails.application.routes.draw do
         member do
            get :preview
         end
+        resource :reading_position, only: [:update], controller: 'reading_positions'
         resources :discussions do
           resources :comments do
             member do

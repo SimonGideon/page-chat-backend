@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_29_184955) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_30_125447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -158,6 +158,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_29_184955) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "reading_positions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "book_id", null: false
+    t.integer "page_number", null: false
+    t.float "scroll_offset"
+    t.float "percentage_completed"
+    t.datetime "last_read_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_reading_positions_on_book_id"
+    t.index ["last_read_at"], name: "index_reading_positions_on_last_read_at"
+    t.index ["user_id", "book_id"], name: "index_reading_positions_on_user_id_and_book_id", unique: true
+    t.index ["user_id"], name: "index_reading_positions_on_user_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -199,6 +214,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_29_184955) do
   add_foreign_key "comment_likes", "users"
   add_foreign_key "favorites", "books"
   add_foreign_key "favorites", "users"
+  add_foreign_key "reading_positions", "books"
+  add_foreign_key "reading_positions", "users"
   add_foreign_key "users", "cities"
   add_foreign_key "users", "countries", column: "country_code", primary_key: "code"
 end
