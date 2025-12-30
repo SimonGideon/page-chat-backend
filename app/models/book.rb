@@ -7,6 +7,10 @@ class Book < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :discussions, dependent: :destroy
 
+  has_many :reading_positions, dependent: :destroy
+  has_many :readers, through: :reading_positions, source: :user
+
+
   validates :language, :published_at, presence: true
   # validates :pdf, :cover_image, attached: true, uniqueness: true
 

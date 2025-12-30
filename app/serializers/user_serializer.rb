@@ -21,14 +21,8 @@ class UserSerializer
     user.city_id
   end
 
-  attribute :country_code do |user|
-    user.country_code
-  end
-
   attribute :avatar_url do |user|
-    if user.avatar.attached?
-      Rails.application.routes.url_helpers.url_for(user.avatar)
-    end
+    user.avatar_url
   end
 
   attribute :created_date do |user|
