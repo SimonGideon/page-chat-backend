@@ -57,6 +57,14 @@ Rails.application.routes.draw do
         resources :cities, only: [:index], controller: "cities"
       end
       resources :cities, only: [:index, :show]
+      resources :notifications, only: [:index] do
+        member do
+          patch :mark_as_read
+        end
+        collection do
+          patch :mark_all_as_read
+        end
+      end
       post "/dropdown/get-drop-down-list", to: "dropdown#get_drop_down_list"
     end
   end

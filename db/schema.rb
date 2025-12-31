@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_30_125447) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_31_135433) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -158,6 +158,22 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_30_125447) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "notifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "recipient_id", null: false
+    t.uuid "actor_id", null: false
+    t.string "action", null: false
+    t.string "notifiable_type", null: false
+    t.uuid "notifiable_id", null: false
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
+    t.index ["read_at"], name: "index_notifications_on_read_at"
+    t.index ["recipient_id", "read_at"], name: "index_notifications_on_recipient_id_and_read_at"
+    t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
+  end
+
   create_table "reading_positions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
     t.uuid "book_id", null: false
@@ -196,6 +212,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_30_125447) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
+    t.boolean "email_notifications", default: true, null: false
     t.index ["activated_at"], name: "index_users_on_activated_at"
     t.index ["city_id"], name: "index_users_on_city_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
@@ -214,6 +231,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_30_125447) do
   add_foreign_key "comment_likes", "users"
   add_foreign_key "favorites", "books"
   add_foreign_key "favorites", "users"
+  add_foreign_key "notifications", "users", column: "actor_id"
+  add_foreign_key "notifications", "users", column: "recipient_id"
   add_foreign_key "reading_positions", "books"
   add_foreign_key "reading_positions", "users"
   add_foreign_key "users", "cities"

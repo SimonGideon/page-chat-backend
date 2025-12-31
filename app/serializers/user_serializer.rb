@@ -3,7 +3,7 @@ class UserSerializer
   include Rails.application.routes.url_helpers
 
   attributes :id, :email, :first_name, :last_name, :phone, :address,
-             :gender, :date_of_birth, :avatar_url
+             :gender, :date_of_birth, :avatar_url, :email_notifications
 
   attribute :country do |user|
     user.country&.name || user.read_attribute(:country)

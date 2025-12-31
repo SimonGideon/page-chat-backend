@@ -9,6 +9,12 @@ class User < ApplicationRecord
   has_many :currently_reading_books, through: :reading_positions, source: :book
 
 
+  has_many :notifications, foreign_key: :recipient_id, dependent: :destroy
+  has_many :sent_notifications, class_name: "Notification",
+           foreign_key: :actor_id,
+           dependent: :nullify
+
+
   belongs_to :country, foreign_key: :country_code, primary_key: :code, optional: true
   belongs_to :city, optional: true
 
