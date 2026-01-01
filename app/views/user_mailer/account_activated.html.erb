@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Welcome to Page Chat, <%= @user.first_name %>!</h1>
+    <p>
+      Your account has been successfully activated. We're excited to have you join our community of readers.
+    </p>
+    <p>
+      You can now login and start exploring books, joining discussions, and tracking your reading journey.
+    </p>
+    <p>
+      <a href="<%= @login_url %>" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Login to Page Chat</a>
+    </p>
+    <p>Happy Reading!</p>
+  </body>
+</html>
