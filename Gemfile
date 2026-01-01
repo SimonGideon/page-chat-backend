@@ -20,6 +20,10 @@ gem "sprockets-rails", require: "sprockets/railtie"
 # devise
 gem "devise"
 
+# obscenity for moderation
+gem 'obscenity'
+
+
 # devise jwt
 gem "devise-jwt"
 

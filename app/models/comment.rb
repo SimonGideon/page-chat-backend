@@ -1,10 +1,14 @@
 class Comment < ApplicationRecord
+  include ProfanityFilterable
   belongs_to :discussion, counter_cache: true
   belongs_to :user
   belongs_to :parent, class_name: "Comment", optional: true
   
   has_many :replies, class_name: "Comment", foreign_key: :parent_id, dependent: :destroy
   has_many :comment_likes, dependent: :destroy
+  has_many :reports, as: :reportable, dependent: :destroy
+
+  enum status: { active: 0, flagged: 1, hidden: 2 }
 
 
   validates :user, presence: true

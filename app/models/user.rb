@@ -58,7 +58,13 @@ class User < ApplicationRecord
     Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: false)
   end
 
+  after_update :send_activation_email, if: -> { saved_change_to_confirmed_at? && confirmed_at.present? }
+
   private
+
+  def send_activation_email
+    UserMailer.account_activated(self).deliver_later
+  end
 
   def jwt_revoked?(payload, user)
     !user.present? || user.jti != payload["jti"]

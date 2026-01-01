@@ -118,19 +118,7 @@ module Api
 
         def respond_with(resource, _opts = {})
           if request.method == "POST" && resource.persisted?
-            email_sent = false
-            begin
-              resource.send_confirmation_instructions
-              email_sent = true
-            rescue StandardError => e
-              Rails.logger.error("[SignUp] Failed to send confirmation email: #{e.class} - #{e.message}")
-            end
-
-            message = if email_sent
-              "Signed up successfully. Please check your email to confirm your account and set your password."
-            else
-              "Account created, but confirmation email could not be sent. Please contact support."
-            end
+            message = "Signed up successfully. Please check your email to confirm your account and set your password."
 
             render json: {
               status: { code: 200, message: message },

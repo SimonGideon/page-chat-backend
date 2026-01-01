@@ -65,6 +65,7 @@ Rails.application.routes.draw do
           patch :mark_all_as_read
         end
       end
+      resources :reports, only: [:create]
       post "/dropdown/get-drop-down-list", to: "dropdown#get_drop_down_list"
     end
   end
