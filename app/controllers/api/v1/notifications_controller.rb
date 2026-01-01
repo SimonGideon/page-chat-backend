@@ -4,7 +4,7 @@ module Api
       before_action :authenticate_user!
 
       def index
-        notifications = current_user.notifications.recent.page(params[:page]).per(20)
+        notifications = current_user.notifications.unread.recent.page(params[:page]).per(20)
         json = NotificationSerializer.new(notifications).serializable_hash
         render json: {
           data: json[:data].map { |d| d[:attributes] },

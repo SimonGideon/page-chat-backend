@@ -1,6 +1,14 @@
 class DiscussionSerializer
   include JSONAPI::Serializer
-  attributes :id, :title, :body, :book_id, :user_id, :created_at
+  attributes :id, :book_id, :user_id, :created_at, :status
+
+  attribute :title do |discussion|
+    discussion.hidden? ? "[Content Hidden]" : discussion.title
+  end
+
+  attribute :body do |discussion|
+    discussion.hidden? ? "[This discussion has been hidden due to reports]" : discussion.body
+  end
 
   belongs_to :book, serializer: BookSerializer
   belongs_to :user, serializer: UserSerializer

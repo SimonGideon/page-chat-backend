@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_31_135433) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_01_165312) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -113,6 +113,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_31_135433) do
     t.datetime "updated_at", null: false
     t.uuid "parent_id"
     t.integer "likes_count", default: 0, null: false
+    t.integer "status", default: 0
     t.index ["discussion_id"], name: "index_comments_on_discussion_id"
     t.index ["likes_count"], name: "index_comments_on_likes_count"
     t.index ["parent_id"], name: "index_comments_on_parent_id"
@@ -139,6 +140,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_31_135433) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "comments_count", default: 0, null: false
+    t.integer "status", default: 0
     t.index ["book_id"], name: "index_discussions_on_book_id"
     t.index ["user_id"], name: "index_discussions_on_user_id"
   end
@@ -189,6 +191,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_31_135433) do
     t.index ["user_id"], name: "index_reading_positions_on_user_id"
   end
 
+  create_table "reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "reporter_id", null: false
+    t.string "reportable_type", null: false
+    t.uuid "reportable_id", null: false
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reportable_type", "reportable_id"], name: "index_reports_on_reportable"
+    t.index ["reporter_id"], name: "index_reports_on_reporter_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -235,6 +248,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_31_135433) do
   add_foreign_key "notifications", "users", column: "recipient_id"
   add_foreign_key "reading_positions", "books"
   add_foreign_key "reading_positions", "users"
+  add_foreign_key "reports", "users", column: "reporter_id"
   add_foreign_key "users", "cities"
   add_foreign_key "users", "countries", column: "country_code", primary_key: "code"
 end

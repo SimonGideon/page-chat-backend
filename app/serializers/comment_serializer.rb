@@ -1,6 +1,10 @@
 class CommentSerializer
   include JSONAPI::Serializer
-  attributes :id, :discussion_id, :user_id, :body, :parent_id, :created_at, :likes_count
+  attributes :id, :discussion_id, :user_id, :parent_id, :created_at, :likes_count, :status
+
+  attribute :body do |comment|
+    comment.hidden? ? "[This comment has been hidden due to reports]" : comment.body
+  end
 
   attribute :is_liked do |comment, params|
     if params[:current_user]
