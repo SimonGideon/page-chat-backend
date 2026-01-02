@@ -11,6 +11,26 @@ class Comment < ApplicationRecord
   enum status: { active: 0, flagged: 1, hidden: 2 }
 
 
+  belongs_to :deleted_by, class_name: "User", optional: true
+
+  def soft_delete!(actor, reason: "deleted by author")
+    update!(
+      deleted: true,
+      deleted_at: Time.current,
+      deleted_by: actor,
+      deletion_reason: reason,
+      body: nil
+    )
+  end
+
+  def deleted_placeholder
+    "This comment was deleted"
+  end
+
+  def display_body
+    deleted? ? deleted_placeholder : body
+  end
+
   validates :user, presence: true
   validates :body, presence: true
 
