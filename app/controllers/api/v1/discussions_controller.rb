@@ -58,7 +58,17 @@ module Api
 
       def destroy
         discussion = Discussion.find(params[:id])
-        discussion.destroy
+        
+        if current_user.admin?
+           reason = params[:reason] ? "Admin deleted: #{params[:reason]}" : "Admin deleted record"
+           discussion.soft_delete!(current_user, reason: reason)
+           render json: { message: "Discussion deleted by admin" }
+        elsif discussion.user_id == current_user.id
+           discussion.soft_delete!(current_user, reason: "user deletion")
+           render json: { message: "Discussion deleted" }
+        else
+           render json: { error: "Unauthorized" }, status: :unauthorized
+        end
       end
 
       private

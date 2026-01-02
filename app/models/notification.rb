@@ -15,9 +15,16 @@ class Notification < ApplicationRecord
   validates :notifiable_type, presence: true
   validates :notifiable_id, presence: true
 
-  after_create_commit :send_email_notification
+  after_create_commit :send_email_notification, :broadcast_notification
 
   private
+
+  def broadcast_notification
+    ActionCable.server.broadcast(
+      "notifications_#{recipient_id}",
+      NotificationSerializer.new(self).serializable_hash[:data][:attributes]
+    )
+  end
 
   def send_email_notification
     return unless recipient.email_notifications?

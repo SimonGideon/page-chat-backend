@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_01_165312) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_02_093410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -114,6 +114,13 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_01_165312) do
     t.uuid "parent_id"
     t.integer "likes_count", default: 0, null: false
     t.integer "status", default: 0
+    t.datetime "deleted_at"
+    t.uuid "deleted_by_id"
+    t.string "deletion_reason"
+    t.boolean "deleted", default: false, null: false
+    t.index ["deleted"], name: "index_comments_on_deleted"
+    t.index ["deleted_at"], name: "index_comments_on_deleted_at"
+    t.index ["deleted_by_id"], name: "index_comments_on_deleted_by_id"
     t.index ["discussion_id"], name: "index_comments_on_discussion_id"
     t.index ["likes_count"], name: "index_comments_on_likes_count"
     t.index ["parent_id"], name: "index_comments_on_parent_id"
@@ -141,7 +148,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_01_165312) do
     t.datetime "updated_at", null: false
     t.integer "comments_count", default: 0, null: false
     t.integer "status", default: 0
+    t.boolean "deleted", default: false
+    t.datetime "deleted_at"
+    t.uuid "deleted_by_id"
+    t.string "deletion_reason"
     t.index ["book_id"], name: "index_discussions_on_book_id"
+    t.index ["deleted"], name: "index_discussions_on_deleted"
+    t.index ["deleted_at"], name: "index_discussions_on_deleted_at"
+    t.index ["deleted_by_id"], name: "index_discussions_on_deleted_by_id"
     t.index ["user_id"], name: "index_discussions_on_user_id"
   end
 
@@ -226,6 +240,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_01_165312) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.boolean "email_notifications", default: true, null: false
+    t.integer "role", default: 0
     t.index ["activated_at"], name: "index_users_on_activated_at"
     t.index ["city_id"], name: "index_users_on_city_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
@@ -242,6 +257,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_01_165312) do
   add_foreign_key "cities", "countries", column: "country_code", primary_key: "code"
   add_foreign_key "comment_likes", "comments"
   add_foreign_key "comment_likes", "users"
+  add_foreign_key "comments", "users", column: "deleted_by_id"
+  add_foreign_key "discussions", "users", column: "deleted_by_id"
   add_foreign_key "favorites", "books"
   add_foreign_key "favorites", "users"
   add_foreign_key "notifications", "users", column: "actor_id"
