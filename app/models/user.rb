@@ -49,6 +49,8 @@ class User < ApplicationRecord
     inactive: "inactive"
   }, _suffix: true
 
+  enum role: { user: 0, admin: 1 }
+
   before_destroy :prevent_destroy
 
   has_many :favorite_books, through: :favorites, source: :book

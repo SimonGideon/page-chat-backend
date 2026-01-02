@@ -43,7 +43,13 @@ module Api
         comment.user = user
 
         if comment.save
-          render json: { status: { code: 201, message: "Comment created successfully." }, data: CommentSerializer.new(comment, { params: { current_user: current_user } }).serializable_hash[:data][:attributes] }, status: :created
+          # Serialize the comment
+          serialized_comment = CommentSerializer.new(comment, { params: { current_user: current_user } }).serializable_hash[:data][:attributes]
+          
+          # Broadcast to the discussion channel
+          ActionCable.server.broadcast("discussion_#{discussion.id}", serialized_comment)
+
+          render json: { status: { code: 201, message: "Comment created successfully." }, data: serialized_comment }, status: :created
         else
           render json: { status: { code: 422, message: "Unable to create comment.", errors: comment.errors.full_messages } }, status: :unprocessable_entity
         end
@@ -60,7 +66,17 @@ module Api
 
       def destroy
         comment = Comment.find(params[:id])
-        comment.destroy
+        
+        if current_user.admin?
+           reason = params[:reason] ? "Admin deleted: #{params[:reason]}" : "Admin deleted record"
+           comment.soft_delete!(current_user, reason: reason)
+           render json: { message: "Comment deleted by admin" }
+        elsif comment.user_id == current_user.id
+           comment.soft_delete!(current_user, reason: "user deletion")
+           render json: { message: "Comment deleted" }
+        else
+           render json: { error: "Unauthorized" }, status: :unauthorized
+        end
       end
 
       private
