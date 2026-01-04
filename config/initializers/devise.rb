@@ -137,7 +137,7 @@ Devise.setup do |config|
   # without confirming their account.
   # Default is 0.days, meaning the user cannot access the website without
   # confirming their account.
-  # config.allow_unconfirmed_access_for = 2.days
+  config.allow_unconfirmed_access_for = nil # Users must confirm before logging in
 
   # A period that the user is allowed to confirm their account before their
   # token becomes invalid. For example, if set to 3.days, the user can confirm
@@ -145,7 +145,7 @@ Devise.setup do |config|
   # their account can't be confirmed with the token any more.
   # Default is nil, meaning there is no restriction on how long a user can take
   # before confirming their account.
-  # config.confirm_within = 3.days
+  config.confirm_within = 1.day # Confirmation link expires in 1 day
 
   # If true, requires any email changes to be confirmed (exactly the same way as
   # initial account confirmation) to be applied. Requires additional unconfirmed_email
@@ -309,10 +309,12 @@ Devise.setup do |config|
     jwt.secret = Rails.application.credentials.fetch(:secret_key_base)
     jwt.dispatch_requests = [
       ["POST", %r{^/login$}],
+      ["POST", %r{^/api/v1/login$}],
     ]
     jwt.revocation_requests = [
       ["DELETE", %r{^/logout$}],
+      ["DELETE", %r{^/api/v1/logout$}],
     ]
-    jwt.expiration_time = 30.minutes.to_i
+    jwt.expiration_time = 3000.minutes.to_i
   end
 end

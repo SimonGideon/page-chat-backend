@@ -1,0 +1,744 @@
+openapi: 3.0.3
+info:
+  title: Page Chat API
+  version: v1
+  description: |
+    API documentation for the Page Chat platform.
+    All endpoints respond with JSON payloads.
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local development
+  - url: https://api.pagechat.example.com/api/v1
+    description: Production (example)
+security:
+  - bearerAuth: []
+paths:
+  /signup:
+    post:
+      summary: Register a new user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+  /login:
+    post:
+      summary: Obtain a JWT token
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Authenticated
+          headers:
+            Authorization:
+              schema:
+                type: string
+                example: Bearer <jwt>
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /logout:
+    delete:
+      summary: Revoke the current JWT
+      tags:
+        - Auth
+      responses:
+        "204":
+          description: Logged out
+  /current_user:
+    get:
+      summary: Fetch profile for the authenticated user
+      tags:
+        - Users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /users:
+    get:
+      summary: List all users
+      tags:
+        - Users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+  /users/{user_id}/favorites:
+    get:
+      summary: List favorite books for a user
+      tags:
+        - Favorites
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Favorite"
+  /books:
+    get:
+      summary: List books
+      tags:
+        - Books
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+    post:
+      summary: Create a book
+      tags:
+        - Books
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+  /books/recommended:
+    get:
+      summary: List recommended books
+      tags:
+        - Books
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+  /books/featured:
+    get:
+      summary: List featured books
+      tags:
+        - Books
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+  /books/{id}:
+    get:
+      summary: Show a book
+      tags:
+        - Books
+      parameters:
+        - $ref: "#/components/parameters/BookId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Update a book
+      tags:
+        - Books
+      parameters:
+        - $ref: "#/components/parameters/BookId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookCreate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Delete a book
+      tags:
+        - Books
+      parameters:
+        - $ref: "#/components/parameters/BookId"
+      responses:
+        "204":
+          description: Deleted
+  /books/{book_id}/discussions:
+    get:
+      summary: List discussions for a book
+      tags:
+        - Discussions
+      parameters:
+        - $ref: "#/components/parameters/BookIdPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Discussion"
+    post:
+      summary: Create a discussion
+      tags:
+        - Discussions
+      parameters:
+        - $ref: "#/components/parameters/BookIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DiscussionCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Discussion"
+  /books/{book_id}/discussions/{discussion_id}:
+    get:
+      summary: Show a discussion
+      tags:
+        - Discussions
+      parameters:
+        - $ref: "#/components/parameters/BookIdPath"
+        - $ref: "#/components/parameters/DiscussionId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Discussion"
+  /books/{book_id}/discussions/{discussion_id}/comments:
+    get:
+      summary: List comments for a discussion
+      tags:
+        - Comments
+      parameters:
+        - $ref: "#/components/parameters/BookIdPath"
+        - $ref: "#/components/parameters/DiscussionId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+    post:
+      summary: Create a comment
+      tags:
+        - Comments
+      parameters:
+        - $ref: "#/components/parameters/BookIdPath"
+        - $ref: "#/components/parameters/DiscussionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+  /authors:
+    get:
+      summary: List authors
+      tags:
+        - Authors
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Author"
+    post:
+      summary: Create an author
+      tags:
+        - Authors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+  /authors/{id}:
+    get:
+      summary: Show an author
+      tags:
+        - Authors
+      parameters:
+        - $ref: "#/components/parameters/AuthorId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+    patch:
+      summary: Update an author
+      tags:
+        - Authors
+      parameters:
+        - $ref: "#/components/parameters/AuthorId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorCreate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+    delete:
+      summary: Delete an author
+      tags:
+        - Authors
+      parameters:
+        - $ref: "#/components/parameters/AuthorId"
+      responses:
+        "204":
+          description: Deleted
+  /categories:
+    get:
+      summary: List categories
+      tags:
+        - Categories
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+    post:
+      summary: Create a category
+      tags:
+        - Categories
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+  /categories/{id}:
+    get:
+      summary: Show a category
+      tags:
+        - Categories
+      parameters:
+        - $ref: "#/components/parameters/CategoryId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+    patch:
+      summary: Update a category
+      tags:
+        - Categories
+      parameters:
+        - $ref: "#/components/parameters/CategoryId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryCreate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+    delete:
+      summary: Delete a category
+      tags:
+        - Categories
+      parameters:
+        - $ref: "#/components/parameters/CategoryId"
+      responses:
+        "204":
+          description: Deleted
+  /favorites:
+    get:
+      summary: List all favorites
+      tags:
+        - Favorites
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Favorite"
+    post:
+      summary: Add a favorite
+      tags:
+        - Favorites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FavoriteCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Favorite"
+  /favorites/{id}:
+    get:
+      summary: Show a favorite
+      tags:
+        - Favorites
+      parameters:
+        - $ref: "#/components/parameters/FavoriteId"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Favorite"
+    delete:
+      summary: Remove a favorite
+      tags:
+        - Favorites
+      parameters:
+        - $ref: "#/components/parameters/FavoriteId"
+      responses:
+        "204":
+          description: Deleted
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    UserId:
+      name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    BookId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    BookIdPath:
+      name: book_id
+      in: path
+      required: true
+      schema:
+        type: string
+    DiscussionId:
+      name: discussion_id
+      in: path
+      required: true
+      schema:
+        type: string
+    AuthorId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    CategoryId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    FavoriteId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    UnprocessableEntity:
+      description: Validation errors
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ValidationErrors"
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        membership_number:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        gender:
+          type: string
+        nationality:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+    UserCreate:
+      allOf:
+        - $ref: "#/components/schemas/User"
+        - type: object
+          required:
+            - email
+            - password
+            - password_confirmation
+          properties:
+            password:
+              type: string
+            password_confirmation:
+              type: string
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        recommended:
+          type: boolean
+        author_id:
+          type: string
+        category_id:
+          type: string
+    BookCreate:
+      allOf:
+        - $ref: "#/components/schemas/Book"
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        biography:
+          type: string
+    AuthorCreate:
+      allOf:
+        - $ref: "#/components/schemas/Author"
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    CategoryCreate:
+      allOf:
+        - $ref: "#/components/schemas/Category"
+    Favorite:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        book_id:
+          type: string
+    FavoriteCreate:
+      required:
+        - user_id
+        - book_id
+      properties:
+        user_id:
+          type: string
+        book_id:
+          type: string
+    Discussion:
+      type: object
+      properties:
+        id:
+          type: string
+        book_id:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+    DiscussionCreate:
+      required:
+        - title
+        - body
+      properties:
+        title:
+          type: string
+        body:
+          type: string
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        discussion_id:
+          type: string
+        body:
+          type: string
+    CommentCreate:
+      required:
+        - body
+      properties:
+        body:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+    ValidationErrors:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+

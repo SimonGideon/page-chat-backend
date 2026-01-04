@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Hi <%= @recipient.first_name %>,</h1>
+    
+    <p>
+      <% if @action == 'liked_comment' %>
+        <%= @actor.first_name %> liked your comment.
+      <% elsif @action == 'replied_to_comment' %>
+        <%= @actor.first_name %> replied to your comment.
+      <% elsif @action == 'commented_on_discussion' %>
+        <%= @actor.first_name %> commented on your discussion.
+      <% end %>
+    </p>
+    
+    <p>
+      <a href="<%= ENV.fetch('FRONTEND_URL', 'http://localhost:5173') %>/profile/notifications">View Notification</a>
+    </p>
+
+    <p>
+      <small>
+        You are receiving this email because you have notifications enabled.
+        To change your preferences, visit your <a href="<%= ENV.fetch('FRONTEND_URL', 'http://localhost:5173') %>/profile/settings">Settings</a>.
+      </small>
+    </p>
+  </body>
+</html>

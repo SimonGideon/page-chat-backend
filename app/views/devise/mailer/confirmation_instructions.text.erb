@@ -1,0 +1,15 @@
+<% front_end_url = ENV.fetch("FRONTEND_URL", "http://localhost:5173") %>
+Hello <%= @resource.first_name.presence || @resource.email %>,
+
+Thank you for signing up for Page Chat! We're excited to have you join our community.
+
+To complete your registration and activate your account, please visit the following link:
+
+<%= "#{front_end_url}/activate-account?confirmation_token=#{@token}&email=#{ERB::Util.url_encode(@resource.email)}" %>
+
+This link will expire in 24 hours for security reasons.
+
+If you didn't create an account with Page Chat, please ignore this email.
+
+— The Page Chat Team
+
