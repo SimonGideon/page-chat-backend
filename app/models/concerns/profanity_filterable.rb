@@ -15,6 +15,9 @@ module ProfanityFilterable
 
   def sanitize_profanity
     return unless respond_to?(:body) && body.present?
+    
+    # Capture original body for analysis
+    original_body = body.dup
 
     if Obscenity.profane?(body)
       self.status = :flagged if respond_to?(:status=)
@@ -25,6 +28,19 @@ module ProfanityFilterable
         mask = word.gsub(/[aeiou]/i, '*')
         # Use case-insensitive replacement for the word in the body
         self.body = body.gsub(/#{Regexp.escape(word)}/i, mask)
+      end
+
+
+      # Call Suspicion Gate to track violation and get determination
+      decision = ContentSafety::SuspicionGate.monitor(text: original_body, user: self.user)
+      
+      case decision
+      when :hide
+        self.status = :hidden
+      when :flag
+        self.status = :flagged
+      when :allow
+        self.status = :active
       end
     end
   end

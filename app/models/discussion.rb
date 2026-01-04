@@ -1,5 +1,6 @@
 class Discussion < ApplicationRecord
   include ProfanityFilterable
+  include Mentionable
   has_many :reports, as: :reportable, dependent: :destroy
   belongs_to :book
   belongs_to :user

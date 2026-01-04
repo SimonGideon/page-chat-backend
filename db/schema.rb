@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_02_093410) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_03_114056) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -241,6 +241,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_02_093410) do
     t.string "unconfirmed_email"
     t.boolean "email_notifications", default: true, null: false
     t.integer "role", default: 0
+    t.integer "speech_violation_rating", default: 0
     t.index ["activated_at"], name: "index_users_on_activated_at"
     t.index ["city_id"], name: "index_users_on_city_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
