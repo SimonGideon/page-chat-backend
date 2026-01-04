@@ -8,7 +8,7 @@ module ContentSafety
       service = new(text, user, context)
       
       if service.suspicious?
-        user&.increment!(:speech_violation_rating)
+        user&.increment_violation_rating!
         
         # Content is suspicious, verify with Azure AI
         return AzureContentSafety.analyze(text)[:action]

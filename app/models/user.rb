@@ -61,6 +61,13 @@ class User < ApplicationRecord
   end
 
   after_update :send_activation_email, if: -> { saved_change_to_confirmed_at? && confirmed_at.present? }
+  
+  def increment_violation_rating!
+    increment!(:speech_violation_rating)
+    if speech_violation_rating >= 60 && !suspended_status?
+      suspended_status!
+    end
+  end
 
   private
 
