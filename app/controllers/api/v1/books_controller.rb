@@ -34,6 +34,7 @@ module Api
       def index
         @books = Book.includes(:author, :category).with_attached_pdf.with_attached_cover_image
         @books = @books.where(language: params[:language]) if params[:language].present?
+        @books = @books.search_by_term(params[:q]) if params[:q].present?
         render json: serialized_books(@books), status: :ok
       end
 
@@ -41,6 +42,7 @@ module Api
       def featured
         @books = Book.where(featured: true).includes(:author, :category).with_attached_pdf.with_attached_cover_image
         @books = @books.where(language: params[:language]) if params[:language].present?
+        @books = @books.search_by_term(params[:q]) if params[:q].present?
         render json: serialized_books(@books), status: :ok
       end
 
@@ -48,6 +50,7 @@ module Api
       def recommended
         @books = Book.where(recommended: true).includes(:author, :category).with_attached_pdf.with_attached_cover_image
         @books = @books.where(language: params[:language]) if params[:language].present?
+        @books = @books.search_by_term(params[:q]) if params[:q].present?
         render json: serialized_books(@books), status: :ok
       end
 
