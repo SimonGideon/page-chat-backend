@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.3.1"
+ruby "3.2.2"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.3", ">= 7.1.3.4"
@@ -11,11 +11,18 @@ gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
+# Gemfile
+gem "sprockets-rails", require: "sprockets/railtie"
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
 # devise
 gem "devise"
+
+# obscenity for moderation
+gem 'obscenity'
+
 
 # devise jwt
 gem "devise-jwt"
@@ -28,12 +35,22 @@ gem "redis", ">= 4.0.1"
 
 # serializer
 gem "jsonapi-serializer"
-
-# Use Redis adapter to run Action Cable in production
+gem "rswag-api"
+gem "rswag-ui"
+# Admin UI
+gem "trestle"
+# # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
-# gem "kredis"
+gem "kredis"
+
+# add active storage
+gem "image_processing", "~> 1.2"
+
+# pdf processing
+gem "pdf-reader"
+gem "combine_pdf"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
@@ -53,6 +70,7 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
+  gem "dotenv-rails"
   gem "rspec-rails", "~> 6.1.0"
   # buybug
   gem "byebug"
@@ -60,6 +78,7 @@ group :development, :test do
   gem "factory_bot_rails"
   # faker
   gem "faker"
+  gem "rswag-specs"
 end
 
 group :development do
