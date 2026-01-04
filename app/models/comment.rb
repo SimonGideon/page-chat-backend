@@ -1,5 +1,6 @@
 class Comment < ApplicationRecord
   include ProfanityFilterable
+  include Mentionable
   belongs_to :discussion, counter_cache: true
   belongs_to :user
   belongs_to :parent, class_name: "Comment", optional: true

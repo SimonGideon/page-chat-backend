@@ -9,7 +9,13 @@ module Api
         before_action :set_user, only: [:update]
 
         def index
-          @users = User.all
+          @users = if params[:q].present?
+                     query = params[:q].downcase
+                     User.where("lower(first_name) LIKE ? OR lower(last_name) LIKE ?", "%#{query}%", "%#{query}%")
+                   else
+                     User.all
+                   end
+
           render json: {
                   status: { code: 200, message: "Successfully fetched users." },
                   data: UserSerializer.new(@users).serializable_hash[:data].map { |user| user[:attributes] },
