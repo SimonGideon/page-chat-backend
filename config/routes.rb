@@ -66,7 +66,7 @@ Rails.application.routes.draw do
         end
       end
       resources :reports, only: [:create]
-      post "/dropdown/get-drop-down-list", to: "dropdown#get_drop_down_list"
+      get "/dropdown/get-drop-down-list", to: "dropdown#get_drop_down_list"
     end
   end
 end
