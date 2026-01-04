@@ -25,6 +25,14 @@ class Book < ApplicationRecord
   after_commit :extract_page_count, if: :pdf_attached?
   before_validation :set_recommended
 
+  scope :search_by_term, ->(term) {
+    return all if term.blank?
+    
+    sanitized_term = "%#{sanitize_sql_like(term)}%"
+    left_joins(:author, :category)
+      .where("books.title ILIKE :term OR authors.name ILIKE :term OR categories.name ILIKE :term", term: sanitized_term)
+  }
+
   private
 
   # PDF upload content-type validation
