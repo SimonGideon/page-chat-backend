@@ -37,8 +37,10 @@ module ProfanityFilterable
       case decision
       when :hide
         self.status = :hidden
+        UserMailer.violation_notice(self.user, :hidden, self.user.speech_violation_rating).deliver_later
       when :flag
         self.status = :flagged
+        UserMailer.violation_notice(self.user, :flagged, self.user.speech_violation_rating).deliver_later
       when :allow
         self.status = :active
       end
