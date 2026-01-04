@@ -22,7 +22,7 @@ Rails.application.configure do
   if Rails.root.join("tmp/caching-dev.txt").exist?
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      "Cache-Control" => "public, max-age=#{2.days.to_i}"
+      "Cache-Control" => "public, max-age=#{2.days.to_i}",
     }
   else
     config.action_controller.perform_caching = false
@@ -33,10 +33,22 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
-
+  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_caching = false
+
+  # Use Gmail SMTP for outbound mail in development.
+  config.action_mailer.delivery_method = :smtp
+  smtp_starttls = ActiveModel::Type::Boolean.new.cast(ENV.fetch("SMTP_STARTTLS", "true"))
+  config.action_mailer.smtp_settings = {
+    address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
+    user_name: ENV.fetch("SMTP_USERNAME", "email.delivery.adt@gmail.com"),
+    password: ENV["SMTP_PASSWORD"],
+    authentication: ENV.fetch("SMTP_AUTHENTICATION", "plain"),
+    enable_starttls_auto: smtp_starttls,
+    open_timeout: ENV.fetch("SMTP_OPEN_TIMEOUT", 5).to_i,
+    read_timeout: ENV.fetch("SMTP_READ_TIMEOUT", 5).to_i,
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -57,9 +69,7 @@ Rails.application.configure do
   config.active_job.verbose_enqueue_logs = true
 
   # devise action mailer
-  config.action_mailer.default_url_options = { host: 'localhost', port: 4000 }
-
-
+  config.action_mailer.default_url_options = { host: "localhost", port: 4000 }
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
@@ -72,4 +82,6 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+  Rails.application.routes.default_url_options = { host: "localhost", port: 3000 }
 end

@@ -2,11 +2,17 @@ require_relative "boot"
 
 require "rails/all"
 
+begin
+  require "dotenv/load"
+rescue LoadError
+  # Dotenv is optional; skip loading if the gem isn't available (e.g., production)
+end
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module FaithReads
+module PageChat
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
@@ -24,14 +30,15 @@ module FaithReads
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # Only loads a smaller set of middleware suitable for API only apps.
-    # Middleware like session, flash, cookies can be added back manually.
-    # Skip views, helpers and assets when generating a new resource.
-    config.api_only = true
+    # Enable full Rails stack so Trestle admin can render HTML responses.
+    config.api_only = false
     config.generators do |g|
       g.test_framework(:rspec, fixture: false, views: false, helper: false)
 
       # g.fixture_replacement :factory_bot, dir: "spec/factories"
+    end
+    config.generators do |g|
+      g.orm :active_record, primary_key_type: :uuid
     end
   end
 end

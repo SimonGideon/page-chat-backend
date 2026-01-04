@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h2>Warning: Your Content Has Been Flagged</h2>
+    <p>Dear <%= @user.first_name %>,</p>
+    <p>
+      Your <%= @content_type.downcase %> has received multiple reports from the community and has been flagged for review.
+    </p>
+    <p>
+      We value open discussion, but please remember to adhere to our community guidelines.
+      Excessive reports may lead to your content being hidden or your account being restricted.
+    </p>
+    <p>
+      You can review the flagged content here:
+      <br />
+      <%= link_to "View Flagged Content", @content_link %>
+    </p>
+    <p>
+      If you believe this is a mistake, please contact support.
+    </p>
+    <p>
+      Regards,<br>
+      The Page Chat Team
+    </p>
+  </body>
+</html>
