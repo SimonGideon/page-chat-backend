@@ -77,5 +77,5 @@ test:
 production:
   <<: *default
   database: page_chat_production
-  username: <%= ENV["POSTGRES_USER_PROD"] =%>
+  username: <%= ENV["POSTGRES_USER_PROD"] %>
   password: <%= ENV["POSTGRES_PASSWORD_PROD"] %>
