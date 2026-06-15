@@ -1,45 +1,138 @@
-<div class="dashboard">
-  <div class="dashboard__stats">
-    <div class="dashboard__card">
-      <span class="dashboard__label">Books</span>
-      <span class="dashboard__value"><%= number_with_delimiter(@book_count) %></span>
-    </div>
-    <div class="dashboard__card">
-      <span class="dashboard__label">Authors</span>
-      <span class="dashboard__value"><%= number_with_delimiter(@author_count) %></span>
-    </div>
-    <div class="dashboard__card">
-      <span class="dashboard__label">Categories</span>
-      <span class="dashboard__value"><%= number_with_delimiter(@category_count) %></span>
-    </div>
-    <div class="dashboard__card">
-      <span class="dashboard__label">Members</span>
-      <span class="dashboard__value"><%= number_with_delimiter(@user_count) %></span>
+<%# ── Stat cards ─────────────────────────────────────────────────── %>
+<div class="pc-stats-grid">
+  <div class="pc-stat-card">
+    <div class="pc-stat-icon books">📚</div>
+    <div class="pc-stat-body">
+      <div class="pc-stat-value"><%= number_with_delimiter(@book_count) %></div>
+      <div class="pc-stat-label">Total Books</div>
+      <% if @new_books_month > 0 %>
+        <div style="font-size:11px;color:#10b981;margin-top:4px;font-weight:600;">
+          +<%= @new_books_month %> this month
+        </div>
+      <% end %>
     </div>
   </div>
 
-  <div class="dashboard__recent">
-    <h2>Recently Added Books</h2>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Author</th>
-          <th>Category</th>
-          <th>Published</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @recent_books.each do |book| %>
-          <tr>
-            <td><%= book.title %></td>
-            <td><%= book.author&.name || "—" %></td>
-            <td><%= book.category&.name || "—" %></td>
-            <td><%= book.published_at&.strftime("%b %d, %Y") || "—" %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+  <div class="pc-stat-card">
+    <div class="pc-stat-icon authors">✍️</div>
+    <div class="pc-stat-body">
+      <div class="pc-stat-value"><%= number_with_delimiter(@author_count) %></div>
+      <div class="pc-stat-label">Authors</div>
+    </div>
+  </div>
+
+  <div class="pc-stat-card">
+    <div class="pc-stat-icon cats">🏷️</div>
+    <div class="pc-stat-body">
+      <div class="pc-stat-value"><%= number_with_delimiter(@category_count) %></div>
+      <div class="pc-stat-label">Categories</div>
+    </div>
+  </div>
+
+  <div class="pc-stat-card">
+    <div class="pc-stat-icon users">👥</div>
+    <div class="pc-stat-body">
+      <div class="pc-stat-value"><%= number_with_delimiter(@user_count) %></div>
+      <div class="pc-stat-label">Members</div>
+      <% if @new_users_week > 0 %>
+        <div style="font-size:11px;color:#10b981;margin-top:4px;font-weight:600;">
+          +<%= @new_users_week %> this week
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="pc-stat-card">
+    <div class="pc-stat-icon featured">⭐</div>
+    <div class="pc-stat-body">
+      <div class="pc-stat-value"><%= number_with_delimiter(@featured_count) %></div>
+      <div class="pc-stat-label">Featured</div>
+    </div>
+  </div>
+
+  <div class="pc-stat-card">
+    <div class="pc-stat-icon recommended">👍</div>
+    <div class="pc-stat-body">
+      <div class="pc-stat-value"><%= number_with_delimiter(@recommended_count) %></div>
+      <div class="pc-stat-label">Recommended</div>
+    </div>
   </div>
 </div>
 
+<%# ── Quick-access links ─────────────────────────────────────────── %>
+<div class="pc-quick-links">
+  <%= link_to "📖 Add Book",     "/admin/books/new",     class: "pc-quick-link" %>
+  <%= link_to "✍️ Add Author",   "/admin/authors/new",   class: "pc-quick-link" %>
+  <%= link_to "🏷️ Add Category", "/admin/categories/new", class: "pc-quick-link" %>
+  <%= link_to "👥 View Members", "/admin/users",         class: "pc-quick-link" %>
+  <%= link_to "🚩 Reports",      "/admin/reports",       class: "pc-quick-link" %>
+</div>
+
+<%# ── Two-column: recent books + recent users ────────────────────── %>
+<div class="pc-two-col">
+
+  <%# Recent Books %>
+  <div class="pc-recent-section">
+    <div class="pc-recent-header">
+      <span class="pc-recent-title">Recently Added Books</span>
+      <%= link_to "See all →", "/admin/books", class: "pc-see-all" %>
+    </div>
+
+    <% @recent_books.each do |book| %>
+      <div class="pc-book-row">
+        <% if book.cover_image.attached? %>
+          <img src="<%= url_for(book.cover_image) %>"
+               class="pc-book-cover"
+               alt="<%= book.title %>"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="pc-book-cover-placeholder" style="display:none">📖</div>
+        <% else %>
+          <div class="pc-book-cover-placeholder">📖</div>
+        <% end %>
+
+        <div class="pc-book-info">
+          <div class="pc-book-title"><%= book.title %></div>
+          <div class="pc-book-meta">
+            <%= book.author&.name || "—" %>
+            <% if book.category.present? %>
+              &middot; <span style="color:#f59e0b"><%= book.category.name %></span>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="pc-book-badges">
+          <% if book.featured? %>
+            <span class="status-tag status-warning" title="Featured">⭐</span>
+          <% end %>
+          <% if book.recommended? %>
+            <span class="status-tag status-info" title="Recommended">👍</span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Recent Users %>
+  <div class="pc-recent-section">
+    <div class="pc-recent-header">
+      <span class="pc-recent-title" style="--pc-icon:'👤'">Recently Joined Members</span>
+      <%= link_to "See all →", "/admin/users", class: "pc-see-all" %>
+    </div>
+
+    <% @recent_users.each do |user| %>
+      <div class="pc-user-row">
+        <div class="pc-avatar">
+          <%= (user.first_name.presence || user.email)[0].upcase %>
+        </div>
+        <div class="pc-user-info">
+          <div class="pc-user-name"><%= "#{user.first_name} #{user.last_name}".strip.presence || "—" %></div>
+          <div class="pc-user-email"><%= user.email %></div>
+        </div>
+        <span class="status-tag status-<%= user.status == 'active' ? 'success' : 'default' %>">
+          <%= user.status.titleize %>
+        </span>
+      </div>
+    <% end %>
+  </div>
+
+</div>

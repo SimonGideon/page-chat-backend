@@ -11,9 +11,12 @@ Rails.application.routes.draw do
                            confirmation: "activate-account",
                          },
                          controllers: {
-                           sessions: "api/v1/users/sessions",
-                           registrations: "api/v1/users/registrations",
-                           confirmations: "api/v1/users/confirmations",
+                           sessions:            "api/v1/users/sessions",
+                           registrations:       "api/v1/users/registrations",
+                           confirmations:       "api/v1/users/confirmations",
+                           # This tells Devise to use our new controller for
+                           # the /auth/google_oauth2/callback route
+                           omniauth_callbacks:  "api/v1/users/omniauth_callbacks",
                          }
 
       get "/current_user", to: "users/current_user#index"
