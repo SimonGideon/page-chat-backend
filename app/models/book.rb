@@ -22,8 +22,7 @@ class Book < ApplicationRecord
   validate :acceptable_images
   validate :unique_title_author_combination
 
-  after_commit :extract_page_count, if: :pdf_attached?
-  before_validation :set_recommended
+  after_commit :extract_page_count, if: :pdf_newly_attached?
 
   scope :search_by_term, ->(term) {
     return all if term.blank?
@@ -44,17 +43,12 @@ class Book < ApplicationRecord
     end
   end
 
-  # set recommended to false if not present
-  def set_recommended
-    self.recommended = false if self.recommended.nil?
-  end
-
   # Cover image upload validation
   def acceptable_images
     return unless cover_image.attached?
 
-    unless cover_image.byte_size <= 1.megabyte
-      errors.add(:cover_image, "is too big")
+    unless cover_image.byte_size <= 5.megabytes
+      errors.add(:cover_image, "must be under 5MB")
     end
 
     acceptable_types = ["image/png", "image/jpg", "image/jpeg", "image/avif", "image/webp", "image/svg+xml"]
@@ -68,18 +62,19 @@ class Book < ApplicationRecord
     return unless pdf.attached?
 
     reader = PDF::Reader.new(StringIO.new(pdf.download))
-    self.update_column(:page_count, reader.page_count)
+    update_column(:page_count, reader.page_count)
+  rescue => e
+    Rails.logger.error("extract_page_count failed for Book ##{id}: #{e.message}")
   end
 
-  # Check if the PDF is attached
-  def pdf_attached?
-    pdf.attached?
+  def pdf_newly_attached?
+    attachment_changes["pdf"].present? || (pdf.attached? && page_count.nil?)
   end
 
   def unique_title_author_combination
     return unless author_id.present?
 
-    if Book.where(author_id: author_id, title: title).exists?
+    if Book.where(author_id: author_id, title: title).where.not(id: id).exists?
       errors.add(:title, "Book Already Exists")
     end
   end

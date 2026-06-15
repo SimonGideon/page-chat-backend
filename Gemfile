@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.2.2"
+ruby "3.3.1"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.3", ">= 7.1.3.4"
@@ -27,6 +27,11 @@ gem 'obscenity'
 # devise jwt
 gem "devise-jwt"
 
+# Google OAuth — omniauth-google-oauth2 is the Google strategy,
+# omniauth-rails_csrf_protection is a security patch required for Rails 5.2+
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
+
 # CORSE for cross origin
 gem "rack-cors"
 
@@ -39,6 +44,7 @@ gem "rswag-api"
 gem "rswag-ui"
 # Admin UI
 gem "trestle"
+gem "trestle-auth"
 # # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
@@ -47,6 +53,9 @@ gem "kredis"
 
 # add active storage
 gem "image_processing", "~> 1.2"
+
+# MinIO / S3-compatible object storage
+gem "aws-sdk-s3", require: false
 
 # pdf processing
 gem "pdf-reader"
