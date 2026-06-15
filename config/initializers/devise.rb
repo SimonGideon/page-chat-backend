@@ -263,9 +263,14 @@ Devise.setup do |config|
   config.sign_out_via = :delete
 
   # ==> OmniAuth
-  # Add a new OmniAuth provider. Check the wiki for more information on setting
-  # up on your models and hooks.
-  # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+  # Google OAuth2 strategy. Path prefix must match the namespace in routes.rb
+  # (/api/v1/auth) so Devise generates the correct initiate + callback URLs.
+  config.omniauth_path_prefix = "/api/v1/auth"
+  config.omniauth :google_oauth2,
+                  ENV.fetch("GOOGLE_CLIENT_ID"),
+                  ENV.fetch("GOOGLE_CLIENT_SECRET"),
+                  scope: "email,profile",
+                  prompt: "select_account"
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
@@ -310,6 +315,7 @@ Devise.setup do |config|
     jwt.dispatch_requests = [
       ["POST", %r{^/login$}],
       ["POST", %r{^/api/v1/login$}],
+      ["GET", %r{^/api/v1/auth/google_oauth2/callback$}],
     ]
     jwt.revocation_requests = [
       ["DELETE", %r{^/logout$}],

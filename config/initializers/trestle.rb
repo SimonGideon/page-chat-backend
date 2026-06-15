@@ -5,24 +5,32 @@ Trestle.configure do |config|
   #
   config.site_title = "Page Chat"
 
-  # Specify a custom image to be used in place of the site title for mobile and
-  # expanded/desktop navigation. These images should be placed within your
-  # asset paths, e.g. app/assets/images.
-  #
-  # config.site_logo = "logo.png"
-
-  # Specify a custom image to be used for the collapsed/tablet navigation.
-  #
-  # config.site_logo_small = "logo-small.png"
-
-  # Specify a favicon to be used within the admin.
-  #
-  # config.favicon = "favicon.ico"
-
   # Set the text shown in the page footer within the admin.
-  # Defaults to 'Powered by Trestle'.
-  #
-  # config.footer = "Powered by Trestle"
+  config.footer = "Page Chat Admin &copy; #{Time.current.year}".html_safe
+
+  # == Navigation
+  config.menu do
+    item :dashboard, icon: "fa fa-home", priority: :first
+
+    group "Library", priority: 1 do
+      item :books,      icon: "fa fa-book"
+      item :authors,    icon: "fa fa-pen-nib"
+      item :categories, icon: "fa fa-tags"
+    end
+
+    group "People", priority: 2 do
+      item :users, icon: "fa fa-users"
+    end
+
+    group "Locations", priority: 3 do
+      item :countries, icon: "fa fa-globe"
+      item :cities,    icon: "fa fa-map-marker"
+    end
+
+    group "Reports", priority: 4 do
+      item :reports, icon: "fa fa-chart-bar"
+    end
+  end
 
   # Sets the default precision for timestamps (either :minutes or :seconds).
   # Defaults to :minutes.
@@ -131,4 +139,21 @@ Trestle.configure do |config|
   # Enable debugging of form errors. Defaults to true in development mode.
   #
   # config.debug_form_errors = true
+
+  # == Authentication (trestle-auth)
+  # Use the basic backend with Devise password checks. The Devise+JWT API mapping
+  # does not support cookie/session login via Warden for the admin form.
+  config.auth.backend = :basic
+  config.auth.user_class = -> { User }
+  config.auth.authenticate_with = :email
+  config.auth.authenticate = ->(params) {
+    creds = params[:user] || params["user"] || params
+    email = creds[:email] || creds["email"]
+    password = creds[:password] || creds["password"]
+    user = User.find_for_database_authentication(email: email)
+    return unless user&.valid_password?(password)
+    return unless user.confirmed? && user.active_for_authentication? && user.admin?
+
+    user
+  }
 end

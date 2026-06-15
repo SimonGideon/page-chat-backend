@@ -29,8 +29,9 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Object storage via MinIO (S3-compatible). Files are proxied through Rails.
+  config.active_storage.service = :minio
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -39,10 +40,11 @@ Rails.application.configure do
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  # config.assume_ssl = true
+  config.assume_ssl = ActiveModel::Type::Boolean.new.cast(ENV.fetch("ASSUME_SSL", "false"))
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # Defaults to true; set RAILS_FORCE_SSL=false when SSL is terminated by an upstream reverse proxy.
+  config.force_ssl = ActiveModel::Type::Boolean.new.cast(ENV.fetch("RAILS_FORCE_SSL", "true"))
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
@@ -98,5 +100,9 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  Rails.application.routes.default_url_options = { host: "your-domain.com", protocol: "https" }
+  app_host = ENV.fetch("APP_HOST", "localhost")
+  app_protocol = ENV.fetch("APP_PROTOCOL", config.force_ssl ? "https" : "http")
+  Rails.application.routes.default_url_options = { host: app_host, protocol: app_protocol }
+
+  config.hosts << app_host if app_host.present?
 end
